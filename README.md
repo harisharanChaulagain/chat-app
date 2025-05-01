@@ -28,3 +28,28 @@ A full-stack real-time chat application built with **Next.js**, **Node.js/Expres
 
 ## 📁 Project Structure
 
+chat-app/
+├── backend/                 
+│   ├── controllers/         
+│   ├── models/             
+│   ├── routes/              
+│   ├── middlewares/   
+│   ├── jwt/        
+│   ├── validation/  
+│   ├── types/  
+│   ├── config/             
+│   ├── sockets/            
+│   ├── .env               
+│   └── index.ts           
+│
+├── frontend/               
+│   ├── app/   
+│   ├── components/         
+│   ├── hooks/             
+│   ├── utils/              
+│   ├── public/            
+│   ├── .env
+│   └── next.config.js       
+│
+├── .gitignore            
+├── README.md             
