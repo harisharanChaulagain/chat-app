@@ -30,7 +30,14 @@ export const registerUser = async (
 
     if (newUser) {
       createTokenAndSaveCookie(newUser._id.toString(), res);
-      return res.status(201).json({ message: "User registered successfully" });
+      return res.status(201).json({
+        message: "User registered successfully",
+        user: {
+          _id: newUser._id,
+          name: newUser.name,
+          email: newUser.email,
+        },
+      });
     }
   } catch (error) {
     return res.status(500).json({ message: "Server error" });
