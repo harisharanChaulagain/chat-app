@@ -4,6 +4,13 @@ import { loginSchema, userRegister } from "../validation/user.validation";
 import bcrypt from "bcryptjs";
 import createTokenAndSaveCookie from "../jwt/generateToken";
 
+interface AuthenticatedRequest extends Request {
+  user?: {
+    _id: string;
+    [key: string]: any;
+  };
+}
+
 export const registerUser = async (
   req: Request,
   res: Response
@@ -89,5 +96,25 @@ export const logout = async (req: Request, res: Response): Promise<any> => {
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Server error" });
+  }
+};
+
+export const getUserProfile = async (
+  req: AuthenticatedRequest,
+  res: Response
+): Promise<void> => {
+  try {
+    if (!req.user) {
+      res.status(401).json({ message: "Unauthorized" });
+      return;
+    }
+
+    const loggedInUser = req.user._id;
+    const allUsers = await User.find({ _id: { $ne: loggedInUser } }).select("-password");
+
+    res.status(200).json({ allUsers });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
   }
 };

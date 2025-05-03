@@ -7,10 +7,10 @@ import Login from './components/Login'
 export default function page() {
   return (
     <div className='w-full flex '>
-      {/* <ChatList/>
-      <MessageBox/> */}
-      <Signup/>
-      <Login/>
+      <ChatList/>
+      <MessageBox/>
+      {/* <Signup/>
+      <Login/> */}
     </div>
   )
 }

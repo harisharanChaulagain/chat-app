@@ -1,6 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
+import cookieParser from "cookie-parser"
 import userRouter from "./routes/user.route"; 
 
 const app = express();
@@ -19,6 +20,7 @@ mongoose
   .catch((err) => console.log("MongoDB connection error:", err));
 
 app.use(express.json());
+app.use(cookieParser())
 
 app.use("/api/user", (req, res, next) => {
   console.log("User route accessed!");
