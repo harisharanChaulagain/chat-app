@@ -1,8 +1,9 @@
 import express from "express";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
-import cookieParser from "cookie-parser"
-import userRouter from "./routes/user.route"; 
+import cookieParser from "cookie-parser";
+import userRouter from "./routes/user.route";
+import messageRoute from "./routes/message.route";
 
 const app = express();
 dotenv.config();
@@ -20,12 +21,24 @@ mongoose
   .catch((err) => console.log("MongoDB connection error:", err));
 
 app.use(express.json());
-app.use(cookieParser())
+app.use(cookieParser());
 
-app.use("/api/user", (req, res, next) => {
-  console.log("User route accessed!");
-  next();
-}, userRouter);
+app.use(
+  "/api/user",
+  (req, res, next) => {
+    console.log("User route accessed!");
+    next();
+  },
+  userRouter
+);
+app.use(
+  "/api/message",
+  (req, res, next) => {
+    console.log("Message route accessed!");
+    next();
+  },
+  messageRoute
+);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
