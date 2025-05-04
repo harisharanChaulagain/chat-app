@@ -1,26 +1,49 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import ChatMessage from './ui/ChatMessage'
+import { useGetMessage } from '@/hooks/useGetMessage'
+import useConversationStore from '@/store/useConversationStore';
+
+type Message = {
+  _id: string;
+  senderId: string;
+  receiverId: string;
+  message: string;
+  createdAt: string;
+  updatedAt: string;
+};
 
 export default function Message() {
-  return (
-    <div className='text-white'>
-          {messages.map(msg => (
-              <ChatMessage
-                  key={msg.id}
-                  message={msg.message}
-                  isSender={msg.isSender}
-                  avatarUrl={msg.avatarUrl}
-                  timestamp="2:45 PM"
-              />
-          ))}
-    </div>
-  )
-}
+  const { data = [], isLoading, error } = useGetMessage();
+  const { currentChatUser } = useConversationStore();
 
-const messages = [
-    { id: 1, message: 'Hey there!', isSender: false, avatarUrl: 'https://i.pravatar.cc/150?img=8' },
-    { id: 2, message: 'Hi! How are you?', isSender: true, avatarUrl: 'https://i.pravatar.cc/150?img=3' },
-    { id: 3, message: 'I am doing great, thanks! What about you?', isSender: false },
-    { id: 4, message: 'Pretty good! Just building a chat app.', isSender: true },
-    { id: 5, message: 'Sounds fun!', isSender: false },
-];
+  const lastMessageRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (lastMessageRef.current) {
+        lastMessageRef.current.scrollIntoView({ behavior: 'smooth' });
+      }
+    }, 100);
+  }, [data]);
+
+  return (
+    <div className="text-white overflow-y-auto max-h-[calc(100vh-200px)] px-4 py-2">
+      {data.map((msg: Message, index) => {
+        const isLast = index === data.length - 1;
+        return (
+          <div key={msg._id} ref={isLast ? lastMessageRef : null}>
+            <ChatMessage
+              message={msg.message}
+              isSender={msg.senderId === currentChatUser}
+              avatarUrl="https://i.pravatar.cc/150?img=8"
+              timestamp={new Date(msg.createdAt).toLocaleTimeString([], {
+                hour: '2-digit',
+                minute: '2-digit',
+              })}
+            />
+          </div>
+        );
+      })}
+    </div>
+  );
+}

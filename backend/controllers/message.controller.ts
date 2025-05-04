@@ -66,7 +66,7 @@ export const getMessage = async (req: Request, res: Response): Promise<any> => {
     }
 
     const message = conversation.messages;
-    res.status(201).json({ message });
+    res.status(201).json({ message, chatUser });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "Server error", error });

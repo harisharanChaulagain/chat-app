@@ -30,10 +30,10 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
             )}
 
             <div className={clsx(
-                'max-w-xs px-4 py-2 rounded-lg text-sm',
+                'max-w-xs px-4 py-2 text-sm',
                 isSender
-                    ? 'bg-blue-500 text-white rounded-br-none'
-                    : 'bg-gray-200 text-black rounded-bl-none'
+                    ? 'bg-blue-500 text-white rounded-l-2xl rounded-tr-3xl rounded-br-none'
+                    : 'bg-gray-200 text-black rounded-r-2xl rounded-tl-3xl rounded-bl-none'
             )}>
                 <p>{message}</p>
                 {timestamp && (
