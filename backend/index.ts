@@ -4,8 +4,9 @@ import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
 import userRouter from "./routes/user.route";
 import messageRoute from "./routes/message.route";
+import { app, server } from "./socketio/server";
 
-const app = express();
+// const app = express();
 dotenv.config();
 
 const PORT = process.env.PORT || 5000;
@@ -40,6 +41,6 @@ app.use(
   messageRoute
 );
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });

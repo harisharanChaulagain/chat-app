@@ -110,11 +110,37 @@ export const getUserProfile = async (
     }
 
     const loggedInUser = req.user._id;
-    const allUsers = await User.find({ _id: { $ne: loggedInUser } }).select("-password");
+    const allUsers = await User.find({ _id: { $ne: loggedInUser } }).select(
+      "-password"
+    );
 
     res.status(200).json({ allUsers });
   } catch (error) {
     console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+export const getAuthenticatedUserProfile = async (
+  req: AuthenticatedRequest,
+  res: Response
+): Promise<void> => {
+  try {
+    if (!req.user) {
+      res.status(401).json({ message: "Unauthorized" });
+      return;
+    }
+    const userId = req.user._id;
+    const user = await User.findById(userId).select("-password");
+
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+      return;
+    }
+
+    res.status(200).json({ user });
+  } catch (error) {
+    console.error("Error fetching user profile:", error);
     res.status(500).json({ message: "Server error" });
   }
 };

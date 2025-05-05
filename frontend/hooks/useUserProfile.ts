@@ -1,11 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/axios";
-
-interface User {
-  _id: string;
-  name: string;
-  email: string;
-}
+import { User } from "@/models/user";
 
 export const useUserProfile = () => {
   return useQuery<User[]>({
