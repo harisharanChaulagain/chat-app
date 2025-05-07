@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import Conversation from "../models/conversation.model";
 import Message from "../models/message.model";
 import { Types } from "mongoose";
+import { getReceiverSocketId, io } from "../socketio/server";
 
 interface AuthenticatedRequest extends Request {
   user: {
@@ -40,6 +41,11 @@ export const sendMessage = async (
     conversation.messages.push(newMessage._id as Types.ObjectId);
 
     await Promise.all([conversation.save(), newMessage.save()]);
+    const receiverSocketId = getReceiverSocketId(receiverId);
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit("newMessage", newMessage);
+      io.to(receiverSocketId).emit("userTyping", null);
+    }
 
     return res.status(201).json({
       message: "Message sent successfully",

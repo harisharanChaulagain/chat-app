@@ -7,18 +7,41 @@ const app = express();
 const server = createServer(app);
 
 const io = new Server(server, {
-    cors: {
-        origin: "http://localhost:3000",
-        methods: ["GET", "POST"]
-    }
+  cors: {
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST"],
+  },
 });
 
-io.on("connection", (socket) => {
-    console.log("New client connected:", socket.id);
+export const getReceiverSocketId = (receiverId: string) => {
+  return users[receiverId];
+};
 
-    socket.on("disconnect", () => {
-        console.log("Client disconnected:", socket.id);
-    });
+const users: { [key: string]: string } = {};
+
+io.on("connection", (socket) => {
+  console.log("New client connected:", socket.id);
+  const userId = socket.handshake.query.userId;
+
+  if (typeof userId === "string") {
+    users[userId] = socket.id;
+    console.log("hello", users);
+  }
+
+  io.emit("getonline", Object.keys(users));
+
+  socket.on("disconnect", () => {
+    console.log("Client disconnected:", socket.id);
+    io.emit("getonline", Object.keys(users));
+  });
+
+    socket.on("startTyping", (senderId: string) => {
+    socket.broadcast.emit("userTyping", senderId);  
+  });
+
+  socket.on("stopTyping", (senderId: string) => {
+    socket.broadcast.emit("userTyping", null);  
+  });
 });
 
 export { app, io, server };
