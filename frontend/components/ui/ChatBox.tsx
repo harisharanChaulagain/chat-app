@@ -1,5 +1,6 @@
 "use client";
 
+import { useSocket } from '@/context/SocketContext';
 import { useSendMessage } from '@/hooks/useSendMessage';
 import useConversationStore from '@/store/useConversationStore';
 import { Send } from 'lucide-react';
@@ -29,12 +30,30 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onSend }) => {
         if (e.key === 'Enter') handleSend();
     };
 
+    const { socket } = useSocket();
+    let typingTimeout: NodeJS.Timeout | null = null;
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setMessage(e.target.value);
+
+        if (socket) {
+            if (typingTimeout) clearTimeout(typingTimeout);
+
+            socket.emit("startTyping", "sender-id");  
+
+            typingTimeout = setTimeout(() => {
+                socket.emit("stopTyping", "sender-id");  
+            }, 1000);
+        }
+    };
+
     return (
         <div className="flex items-center gap-2 p-3 bg-slate-900 border-t border-slate-700">
             <input
                 type="text"
                 value={message}
-                onChange={(e) => setMessage(e.target.value)}
+                // onChange={(e) => setMessage(e.target.value)}
+                onChange={handleChange}
                 onKeyDown={handleKeyPress}
                 placeholder="Type your message..."
                 className="flex-1 p-2 rounded-lg bg-slate-800 text-white focus:outline-none"

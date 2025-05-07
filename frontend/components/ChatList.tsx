@@ -4,10 +4,12 @@ import ChatSearch from './ChatSearch'
 import Avatar from './ui/Avatar'
 import { useUserProfile } from '@/hooks/useUserProfile';
 import useConversationStore from '@/store/useConversationStore';
+import { useSocket } from '@/context/SocketContext';
 
 export default function ChatList() {
     const { data, isLoading, error } = useUserProfile();
     const { selectedConversation, setSelectedConversation } = useConversationStore()
+    const { socket, onlineUsers } = useSocket()
 
     return (
         <main className='w-[30%] h-screen bg-black'>
@@ -19,6 +21,7 @@ export default function ChatList() {
             <div className="divide-y divide-slate-700 h-[82vh] overflow-y-auto">
                 {data?.map(user => {
                     const isSelected = selectedConversation?._id === user._id;
+                    const isOnline = onlineUsers.includes(user?._id)
                     return (
                         <section
                             key={user._id}
@@ -27,7 +30,7 @@ export default function ChatList() {
                                 setSelectedConversation(user)
                             }}
                         >
-                            <Avatar src="https://i.pravatar.cc/150?img=4" isOnline={true} size={48} />
+                            <Avatar src="https://i.pravatar.cc/150?img=4" isOnline={isOnline} size={48} />
                             <div>
                                 <h1 className="font-semibold">{user.name}</h1>
                                 <span className="text-sm text-slate-300">{user.email}</span>
