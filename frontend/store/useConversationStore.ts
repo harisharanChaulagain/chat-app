@@ -6,11 +6,13 @@ type Conversation = {
   email: string;
 };
 
-type Message = {
+export type Message = {
   _id: string;
-  text: string;
-  sender: string;
-  timestamp: string;
+  senderId: string;
+  receiverId: string;
+  message: string;
+  createdAt: string;
+  updatedAt: string;
 };
 
 type ConversationState = {
@@ -20,30 +22,47 @@ type ConversationState = {
   messages: Message[];
   setMessages: (messages: Message[]) => void;
   addMessage: (message: Message) => void;
+  addMessages: (messages: Message[]) => void;
 
   currentChatUser: string | null;
   setCurrentChatuser: (userId: string | null) => void;
 
-    typingUser: string | null;  
-  setTypingUser: (userId: string | null) => void; 
+  typingUser: string | null;
+  setTypingUser: (userId: string | null) => void;
 
+  addMessagesAtStart: (messages: Message[]) => void;
 };
 
 const useConversationStore = create<ConversationState>((set) => ({
   selectedConversation: null,
-  setSelectedConversation: (selectedConversation) =>
-    set({ selectedConversation }),
+  setSelectedConversation: (conv) => set({ selectedConversation: conv }),
 
   messages: [],
-  setMessages: (messages) => set({ messages }),
+  setMessages: (messages) =>
+    set({ messages: Array.isArray(messages) ? messages : [] }),
+
   addMessage: (message) =>
     set((state) => ({ messages: [...state.messages, message] })),
 
-  currentChatUser: null,
-  setCurrentChatuser: (currentChatUser) => set({ currentChatUser }),
+  addMessages: (newMessages) =>
+    set((state) => ({
+      messages: Array.isArray(newMessages)
+        ? [...state.messages, ...newMessages]
+        : state.messages,
+    })),
 
-   typingUser: null, 
-  setTypingUser: (userId: string | null) => set({ typingUser: userId }),
+  addMessagesAtStart: (newMessages) =>
+    set((state) => ({
+      messages: Array.isArray(newMessages)
+        ? [...newMessages, ...state.messages]
+        : state.messages,
+    })),
+
+  currentChatUser: null,
+  setCurrentChatuser: (userId) => set({ currentChatUser: userId }),
+
+  typingUser: null,
+  setTypingUser: (userId) => set({ typingUser: userId }),
 }));
 
 export default useConversationStore;

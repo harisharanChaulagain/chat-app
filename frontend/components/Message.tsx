@@ -1,61 +1,82 @@
 "use client";
 
-import React, { useEffect, useRef } from 'react';
-import ChatMessage from './ui/ChatMessage';
-import { useGetMessage } from '@/hooks/useGetMessage';
-import useConversationStore from '@/store/useConversationStore';
-import useGetSocketMessage from '@/context/useGetSocketMessage';
-
-type Message = {
-  _id: string;
-  senderId: string;
-  receiverId: string;
-  message: string;
-  createdAt: string;
-  updatedAt: string;
-};
+import React, { useEffect, useRef, useState, useCallback } from "react";
+import ChatMessage from "./ui/ChatMessage";
+import { useGetMessage } from "@/hooks/useGetMessage";
+import useConversationStore from "@/store/useConversationStore";
+import useGetSocketMessage from "@/context/useGetSocketMessage";
 
 export default function Message() {
-  const { currentChatUser, messages, setMessages } = useConversationStore();
-  const lastMessageRef = useRef<HTMLDivElement | null>(null);
+  const { currentChatUser, messages, addMessagesAtStart } = useConversationStore();
+  const messageContainerRef = useRef<HTMLDivElement | null>(null);
+  const [page, setPage] = useState(0);
+  const limit = 15;
+  const [prevScrollHeight, setPrevScrollHeight] = useState<number>(0);
 
-  const { data = [], isLoading, error } = useGetMessage();
+  const { data, isLoading, error } = useGetMessage(page, limit);
 
+  // Add messages from API to the start of the list when page changes
   useEffect(() => {
-    if (data.length > 0) {
-      setMessages(data); 
+    if (data && data.messages?.length) {
+      addMessagesAtStart(data.messages); // Add to top (prepend)
     }
-  }, [data, setMessages]);
+  }, [data, addMessagesAtStart]);
+
+  // Scroll to bottom on initial load
+  useEffect(() => {
+    if (page === 0 && messages.length > 0) {
+      setTimeout(() => {
+        if (messageContainerRef.current) {
+          messageContainerRef.current.scrollTop = messageContainerRef.current.scrollHeight;
+        }
+      }, 100);
+    }
+  }, [messages, page]);
+
+  // Restore scroll position after loading older messages
+  useEffect(() => {
+    if (page > 0 && messageContainerRef.current) {
+      const container = messageContainerRef.current;
+      container.scrollTop = container.scrollHeight - prevScrollHeight;
+    }
+  }, [messages]);
 
   useGetSocketMessage();
 
-  useEffect(() => {
-    setTimeout(() => {
-      lastMessageRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, 100);
-  }, [messages]);
+  const handleScroll = useCallback(
+    (event: React.UIEvent<HTMLDivElement>) => {
+      const container = event.currentTarget;
+      const { scrollTop, scrollHeight } = container;
 
-  if (isLoading) return <div className="text-white p-4">Loading messages...</div>;
+      if (scrollTop <= 10 && !isLoading && data?.totalPages && page < data.totalPages - 1) {
+        setPrevScrollHeight(container.scrollHeight);
+        setPage((prev) => prev + 1);
+      }
+    },
+    [data, isLoading, page]
+  );
+
+  if (isLoading && page === 0) return <div className="text-white p-4">Loading messages...</div>;
   if (error) return <div className="text-red-500 p-4">Failed to load messages.</div>;
 
   return (
-    <div className="text-white overflow-y-auto max-h-[calc(100vh-200px)] px-4 py-2">
-      {messages.map((msg: any, index: number) => {
-        const isLast = index === messages.length - 1;
-        return (
-          <div key={msg._id} ref={isLast ? lastMessageRef : null}>
-            <ChatMessage
-              message={msg.message}
-              isSender={msg.senderId === currentChatUser}
-              avatarUrl="https://i.pravatar.cc/150?img=8"
-              timestamp={new Date(msg.createdAt).toLocaleTimeString([], {
-                hour: '2-digit',
-                minute: '2-digit',
-              })}
-            />
-          </div>
-        );
-      })}
+    <div
+      ref={messageContainerRef}
+      className="text-white overflow-y-auto max-h-[calc(100vh-200px)] px-4 py-2"
+      onScroll={handleScroll}
+    >
+      {messages.map((msg, index) => (
+        <ChatMessage
+          key={index}
+          message={msg.message}
+          isSender={msg.senderId === currentChatUser}
+          avatarUrl="https://i.pravatar.cc/150?img=8"
+          timestamp={new Date(msg.createdAt).toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          })}
+        />
+      ))}
     </div>
   );
 }

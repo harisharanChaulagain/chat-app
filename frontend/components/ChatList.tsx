@@ -13,11 +13,11 @@ export default function ChatList() {
 
     return (
         <main className='w-[30%] h-screen bg-black'>
-            <header className=' px-11 mt-4'>
+            <header className=' px-6 mt-4'>
                 <p className='font-bold text-3xl text-white'>Chats</p>
                 <ChatSearch />
             </header>
-            <hr className='text-white my-2' />
+            <hr className='text-white my-3 mx-6' />
             <div className="divide-y divide-slate-700 h-[82vh] overflow-y-auto">
                 {data?.map(user => {
                     const isSelected = selectedConversation?._id === user._id;
@@ -25,7 +25,7 @@ export default function ChatList() {
                     return (
                         <section
                             key={user._id}
-                            className={`flex items-center px-6 py-4 space-x-4 text-white hover:bg-slate-600 duration-300 cursor-pointer ${isSelected ? "bg-slate-600" : ""}`}
+                            className={`flex items-center mx-6 py-4 space-x-4 text-white hover:bg-slate-600 duration-300 cursor-pointer ${isSelected ? "bg-slate-600" : ""}`}
                             onClick={() => {
                                 setSelectedConversation(user)
                             }}

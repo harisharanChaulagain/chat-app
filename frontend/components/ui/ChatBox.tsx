@@ -6,11 +6,7 @@ import useConversationStore from '@/store/useConversationStore';
 import { Send } from 'lucide-react';
 import React, { useState, KeyboardEvent } from 'react';
 
-type ChatBoxProps = {
-    onSend: (message: string) => void;
-};
-
-const ChatBox: React.FC<ChatBoxProps> = ({ onSend }) => {
+const ChatBox = () => {
     const [message, setMessage] = useState('');
 
     const { selectedConversation } = useConversationStore();
@@ -22,7 +18,6 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onSend }) => {
             message,
             id: selectedConversation._id,
         });
-        onSend(message);
         setMessage('');
     };
 
@@ -39,10 +34,10 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onSend }) => {
         if (socket) {
             if (typingTimeout) clearTimeout(typingTimeout);
 
-            socket.emit("startTyping", "sender-id");  
+            socket.emit("startTyping", "sender-id");
 
             typingTimeout = setTimeout(() => {
-                socket.emit("stopTyping", "sender-id");  
+                socket.emit("stopTyping", "sender-id");
             }, 1000);
         }
     };
