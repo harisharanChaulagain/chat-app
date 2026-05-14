@@ -59,22 +59,44 @@ export const sendMessage = async (
 export const getMessage = async (req: Request, res: Response): Promise<any> => {
   try {
     const { id: chatUser } = req.params;
-
     const user = (req as AuthenticatedRequest).user;
     const senderId = user._id;
 
+    const page = parseInt(req.query.page as string) || 0;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const skip = page * limit;
+
     const conversation = await Conversation.findOne({
       participants: { $all: [senderId, chatUser] },
-    }).populate("messages");
+    });
 
     if (!conversation) {
       return res.status(201).json({ message: "No Conversation found" });
     }
 
-    const message = conversation.messages;
-    res.status(201).json({ message, chatUser });
+    const totalMessages = await Message.countDocuments({
+      _id: { $in: conversation.messages },
+    });
+    const totalPages = Math.ceil(totalMessages / limit);
+
+    const messages = await Message.find({
+      _id: { $in: conversation.messages },
+    })
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    res.status(200).json({
+      messages: messages.reverse() || [],
+      currentPage: page,
+      totalPages,
+      totalMessages,
+      hasNextPage: page < totalPages - 1,
+      hasPrevPage: page > 0,
+      chatUser,
+    });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return res.status(500).json({ message: "Server error", error });
   }
 };
