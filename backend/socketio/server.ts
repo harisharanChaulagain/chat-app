@@ -1,61 +1,111 @@
 import express from "express";
 import { createServer } from "http";
-import { Server } from "socket.io";
+import { Server, Socket } from "socket.io";
+import {CallPayload, ICEPayload, TypingPayload,} from "../types/socket.types";
 
 const app = express();
 const server = createServer(app);
 
+type UserId = string;
+type SocketId = string;
+
+const users = new Map<UserId, SocketId>();
+const userDetails = new Map<SocketId, { userId: string; joinedAt: Date }>();
+
 const io = new Server(server, {
-  cors: {
-    origin: "http://localhost:3000",
-    methods: ["GET", "POST"],
-  },
+  cors: {origin: process.env.FRONTEND_URL || "http://localhost:3000",credentials: true,},
+  path: "/socket.io/",
 });
 
-const users: { [key: string]: string } = {};
+export const getReceiverSocketId = (userId: string): string | undefined =>users.get(userId);
+export const getOnlineUsers = (): string[] =>Array.from(users.keys());
 
-// Helper to get receiver's socket id
-export const getReceiverSocketId = (receiverId: string) => users[receiverId];
-
-io.on("connection", (socket) => {
-
-  const userId = socket.handshake.query.userId;
-
-  if (typeof userId === "string" && userId.trim() !== "") {
-    users[userId] = socket.id;
-  } else {
-    console.warn("Invalid or missing userId on connection");
+io.on("connection", (socket: Socket) => {
+  const userId = socket.handshake.query.userId as string | undefined;
+  if (!userId) {socket.disconnect();
+    return;
   }
-
-  // Emit updated online users to all clients
-  // io.emit("getonline", Object.keys(users));
-  io.emit("getonline", users);
-
-  // WebRTC signaling events
-
-  socket.on("initiateCall", ({ userId, offer, myId, callType, fromName }) => {
-    io.to(userId).emit("incomingCall", {
-      offer,
-      from: myId,
-      callType,
-      fromName,
-    });
+  users.set(userId, socket.id);
+  userDetails.set(socket.id, {userId,joinedAt: new Date(),});
+  socket.join(`user:${userId}`);
+  io.emit("getonline", getOnlineUsers());
+  io.emit("user_status_change", {userId,isOnline: true,lastSeen: null,});
+  console.log(`User connected: ${userId}`);
+  socket.on("join_chat", (roomId: string) => {socket.join(`chat:${roomId}`);});
+  socket.on("leave_chat", (roomId: string) => {socket.leave(`chat:${roomId}`);});
+  socket.on("typing", (payload: TypingPayload) => {
+    const receiverSocketId = getReceiverSocketId(payload.receiverId);
+    if (receiverSocketId) {io.to(receiverSocketId).emit("userTyping", {userId,...payload,});}
   });
 
-  socket.on("answerCall", ({ to, answer }) => {
-    io.to(to).emit("callAccepted", answer);
+  socket.on("mark_read", ({ conversationId }: { conversationId: string }) => {
+    socket.to(`chat:${conversationId}`).emit("messages_read", {readBy: userId,conversationId,});
   });
 
-  socket.on("iceCandidate", ({ to, candidate }) => {
-    io.to(to).emit("iceCandidate", candidate);
+  socket.on("initiateCall", (data: CallPayload) => {
+    const targetSocket = getReceiverSocketId(data.userId);
+    if (!targetSocket) {
+      socket.emit("call_error", {message: "User offline", userId: data.userId,});
+      return;
+    }
+    io.to(targetSocket).emit("incomingCall", {...data,from: userId,timestamp: Date.now(),});
   });
 
-  socket.on("endCall", ({ to }) => {
-    io.to(to).emit("callEnded");
+  socket.on(
+    "answerCall",
+    ({ to, answer, callType }: { to: string; answer: any; callType: string }) => {
+      const targetSocket = getReceiverSocketId(to);
+      if (targetSocket) {
+        io.to(targetSocket).emit("callAccepted", {answer,callType,from: userId,});}
+    }
+  );
+
+  socket.on("iceCandidate", (payload: ICEPayload & { to: string }) => {
+    const targetSocket = getReceiverSocketId(payload.to);
+    if (targetSocket) {
+      io.to(targetSocket).emit("iceCandidate", {candidate: payload.candidate,from: userId,});
+    }
+  });
+
+  socket.on(
+    "rejectCall",
+    ({ to, callType }: { to: string; callType: string }) => {
+      const targetSocket = getReceiverSocketId(to);
+      if (targetSocket) {io.to(targetSocket).emit("callRejected", {from: userId,callType,});}
+    }
+  );
+
+  socket.on(
+    "endCall",
+    ({ to, groupId }: { to?: string; groupId?: string }) => {
+      if (to) {
+        const targetSocket = getReceiverSocketId(to);
+        if (targetSocket) {io.to(targetSocket).emit("callEnded", {from: userId,groupId,});}
+      } else if (groupId) {socket.to(`group-call:${groupId}`).emit("callEnded", {from: userId,groupId,});}
+    }
+  );
+
+
+  socket.on(
+    "join_group_call",
+    ({ groupId }: { groupId: string }) => {
+      socket.join(`group-call:${groupId}`);
+      socket.to(`group-call:${groupId}`).emit("user_joined_call", {userId, imestamp: Date.now(),});}
+  );
+
+  socket.on("leave_group_call", ({ groupId }: { groupId: string }) => {
+    socket.leave(`group-call:${groupId}`);
+    socket.to(`group-call:${groupId}`).emit("user_left_call", {userId,});
   });
 
   socket.on("disconnect", () => {
-    console.log("Client disconnected:", socket.id);
+    const data = userDetails.get(socket.id);
+    if (!data) return;
+    users.delete(data.userId);
+    userDetails.delete(socket.id);
+    io.emit("getonline", getOnlineUsers());
+    io.emit("user_status_change", {userId: data.userId,isOnline: false,lastSeen: new Date(),});
+    console.log(`User disconnected: ${data.userId}`);
   });
 });
 
