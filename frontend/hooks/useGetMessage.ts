@@ -15,7 +15,6 @@ export const useGetMessage = (page: number, limit: number) => {
       );
 
       const messages = Array.isArray(data.messages) ? data.messages : [];
-      const chatUser = data?.chatUser || null;
       const totalPages = data?.totalPages || 0;
 
       if (page === 0) {
@@ -24,7 +23,6 @@ export const useGetMessage = (page: number, limit: number) => {
         addMessages(messages);
       }
 
-      setCurrentChatuser(chatUser);
       return { messages, totalPages };
     },
   });

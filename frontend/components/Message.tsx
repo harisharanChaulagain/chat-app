@@ -5,6 +5,7 @@ import ChatMessage from "./ui/ChatMessage";
 import { useGetMessage } from "@/hooks/useGetMessage";
 import useConversationStore from "@/store/useConversationStore";
 import useGetSocketMessage from "@/context/useGetSocketMessage";
+import { useUserStore } from "@/store/userStore";
 
 export default function Message() {
   const { currentChatUser, messages, addMessagesAtStart } = useConversationStore();
@@ -15,14 +16,14 @@ export default function Message() {
 
   const { data, isLoading, error } = useGetMessage(page, limit);
 
-  // Add messages from API to the start of the list when page changes
+  const user = useUserStore((state) => state.user);
+
   useEffect(() => {
     if (data && data.messages?.length) {
-      addMessagesAtStart(data.messages); // Add to top (prepend)
+      addMessagesAtStart(data.messages); 
     }
   }, [data, addMessagesAtStart]);
 
-  // Scroll to bottom on initial load
   useEffect(() => {
     if (page === 0 && messages.length > 0) {
       setTimeout(() => {
@@ -33,7 +34,6 @@ export default function Message() {
     }
   }, [messages, page]);
 
-  // Restore scroll position after loading older messages
   useEffect(() => {
     if (page > 0 && messageContainerRef.current) {
       const container = messageContainerRef.current;
@@ -69,7 +69,7 @@ export default function Message() {
         <ChatMessage
           key={index}
           message={msg.message}
-          isSender={msg.senderId === currentChatUser}
+          isSender={msg.senderId._id === user?._id}
           avatarUrl="https://i.pravatar.cc/150?img=8"
           timestamp={new Date(msg.createdAt).toLocaleTimeString([], {
             hour: "2-digit",

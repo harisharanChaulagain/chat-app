@@ -7,6 +7,7 @@ import { useLogin } from '@/hooks/useLogin';
 import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { Eye, EyeOff, LogIn, Mail, Lock, Sparkles, ArrowRight } from 'lucide-react';
+import { useUserStore } from '@/store/userStore';
 
 const loginSchema = z.object({
     email: z.string().email('Invalid email address'),
@@ -20,6 +21,7 @@ export default function Login() {
     const [isLoading, setIsLoading] = useState(false);
     const [rememberMe, setRememberMe] = useState(false);
     const loginMutation = useLogin();
+    const setUser = useUserStore((state) => state.setUser);
 
     const {
         register,
@@ -49,22 +51,15 @@ export default function Login() {
 
         loginMutation.mutate(data, {
             onSuccess: (response) => {
+                setUser(response.user);
+
                 setIsLoading(false);
+
                 toast.success(response.message || 'Login successful!', {
                     duration: 3000,
                     position: 'top-right',
                     icon: '🎉',
-                    style: {
-                        background: '#10B981',
-                        color: '#fff',
-                        padding: '16px',
-                        borderRadius: '12px',
-                    },
                 });
-
-                if (response.token) {
-                    localStorage.setItem('authToken', response.token);
-                }
 
                 setTimeout(() => {
                     window.location.href = '/chats';

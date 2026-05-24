@@ -8,7 +8,11 @@ type Conversation = {
 
 export type Message = {
   _id: string;
-  senderId: string;
+  senderId: {
+    _id: string;
+    name: string;
+    email: string;
+  };
   receiverId: string;
   message: string;
   createdAt: string;
