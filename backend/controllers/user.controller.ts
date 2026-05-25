@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import User from "../models/user.model";
 import { loginSchema, userRegister } from "../validation/user.validation";
 import createTokenAndSaveCookie from "../jwt/generateToken";
+import followModel from "../models/follow.model";
 
 export const registerUser = async (req: Request, res: Response): Promise<void> => {
   const parseResult = userRegister.safeParse(req.body);
@@ -101,16 +102,74 @@ export const getUserProfile = async (
 ): Promise<void> => {
   try {
     const user = (req as any).user;
+
     if (!user) {
-      res.status(401).json({ message: "Unauthorized" });
+      res.status(401).json({
+        message: "Unauthorized",
+      });
       return;
     }
-    
+
     const loggedInUserId = user._id;
-    const allUsers = await User.find({ _id: { $ne: loggedInUserId } }).select("-password");
-    res.status(200).json({ allUsers });
+
+    const users = await User.find({
+      _id: { $ne: loggedInUserId },
+    }).select("-password");
+
+    const follows = await followModel.find({
+      $or: [
+        { followerId: loggedInUserId },
+        { followingId: loggedInUserId },
+      ],
+    });
+
+    const allUsers = users.map((singleUser) => {
+      const sentFollow = follows.find(
+        (f) =>
+          f.followerId.toString() ===
+            loggedInUserId.toString() &&
+          f.followingId.toString() ===
+            singleUser._id.toString()
+      );
+
+      const receivedFollow = follows.find(
+        (f) =>
+          f.followerId.toString() ===
+            singleUser._id.toString() &&
+          f.followingId.toString() ===
+            loggedInUserId.toString()
+      );
+
+      let followStatus = "follow";
+
+      if (sentFollow) {
+        if (sentFollow.status === "pending") {
+          followStatus = "requested";
+        }
+
+        if (sentFollow.status === "accepted") {
+          followStatus = "following";
+        }
+      }
+
+      else if (receivedFollow) {
+        followStatus = "followBack";
+      }
+
+      return {
+        ...singleUser.toObject(),
+        followStatus,
+      };
+    });
+
+    res.status(200).json({
+      allUsers,
+    });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Server error" });
+
+    res.status(500).json({
+      message: "Server error",
+    });
   }
 };
