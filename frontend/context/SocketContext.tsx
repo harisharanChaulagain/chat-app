@@ -25,7 +25,7 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
     const [userMap, setUserMap] = useState<UserMap>({});
 
     useEffect(() => {
-        const newSocket = io('http://localhost:5000', {
+        const newSocket = io('http://backend:5000', {
             query: { userId: user?._id },
         });
 
