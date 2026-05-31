@@ -13,6 +13,7 @@ import { useUserProfile } from "@/hooks/useUserProfile";
 import { useFollowUser } from "@/hooks/useFollowUser";
 import { useCancelFollowRequest } from "@/hooks/useCancelFollowRequest";
 import { useUnfollowUser } from "@/hooks/useUnfollowUser";
+import Sidebar from "../components/Sidebar";
 
 type FollowStatus =
   | "follow"
@@ -41,12 +42,12 @@ const FriendsPage = () => {
 
       toast.success(
         response?.message ||
-          "Follow request sent"
+        "Follow request sent"
       );
     } catch (error: any) {
       toast.error(
         error?.response?.data?.message ||
-          "Failed to follow user"
+        "Failed to follow user"
       );
     }
   };
@@ -60,12 +61,12 @@ const FriendsPage = () => {
 
       toast.success(
         response?.message ||
-          "Follow request cancelled"
+        "Follow request cancelled"
       );
     } catch (error: any) {
       toast.error(
         error?.response?.data?.message ||
-          "Failed to cancel request"
+        "Failed to cancel request"
       );
     }
   };
@@ -79,12 +80,12 @@ const FriendsPage = () => {
 
       toast.success(
         response?.message ||
-          "Unfollowed successfully"
+        "Unfollowed successfully"
       );
     } catch (error: any) {
       toast.error(
         error?.response?.data?.message ||
-          "Failed to unfollow"
+        "Failed to unfollow"
       );
     }
   };
@@ -192,55 +193,59 @@ const FriendsPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
-      <div className="mx-auto max-w-4xl">
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">
-            People You May Know
-          </h1>
+    <main className="flex w-screen min-h-screen bg-gray-100 ">
+      <Sidebar />
+      <div className="p-6">
+        <div className="mx-auto max-w-4xl">
+          <div className="mb-6">
+            <h1 className="text-3xl font-bold text-gray-900">
+              People You May Know
+            </h1>
 
-          <p className="mt-1 text-gray-500">
-            Connect with other users
-          </p>
-        </div>
+            <p className="mt-1 text-gray-500">
+              Connect with other users
+            </p>
+          </div>
 
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-          {data?.map((user) => (
-            <div
-              key={user._id}
-              className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition hover:shadow-md"
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="flex h-14 w-14 items-center justify-center rounded-full bg-blue-100 text-lg font-bold text-blue-600">
-                    {user.name
-                      .charAt(0)
-                      .toUpperCase()}
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+            {data?.map((user) => (
+              <div
+                key={user._id}
+                className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition hover:shadow-md"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-full bg-blue-100 text-lg font-bold text-blue-600">
+                      {user.name
+                        .charAt(0)
+                        .toUpperCase()}
+                    </div>
+
+                    <div>
+                      <h2 className="text-lg font-semibold text-gray-900">
+                        {user.name}
+                      </h2>
+
+                      <p className="text-sm text-gray-500">
+                        {user.email}
+                      </p>
+                    </div>
                   </div>
 
                   <div>
-                    <h2 className="text-lg font-semibold text-gray-900">
-                      {user.name}
-                    </h2>
-
-                    <p className="text-sm text-gray-500">
-                      {user.email}
-                    </p>
+                    {renderButton(
+                      user.followStatus as FollowStatus,
+                      user._id
+                    )}
                   </div>
                 </div>
-
-                <div>
-                  {renderButton(
-                    user.followStatus as FollowStatus,
-                    user._id
-                  )}
-                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
-    </div>
+    </main>
+
   );
 };
 
