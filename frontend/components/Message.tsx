@@ -9,7 +9,6 @@ import { useUserStore } from "@/store/userStore";
 
 export default function Message() {
   const { currentChatUser, messages, addMessagesAtStart } = useConversationStore();
-  console.log("messages:",messages)
   const messageContainerRef = useRef<HTMLDivElement | null>(null);
   const [page, setPage] = useState(0);
   const limit = 15;

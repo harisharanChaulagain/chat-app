@@ -10,7 +10,7 @@ import CallModal from './CallModal'
 
 export default function MessageBox() {
     const { selectedConversation } = useConversationStore()
-    const { onlineUsers, userMap, socket } = useSocket()
+    const { onlineUsers, socket } = useSocket()
     const isOnline = selectedConversation ? onlineUsers.includes(selectedConversation._id) : false;
     const [callModalOpen, setCallModalOpen] = useState(false)
     const [callType, setCallType] = useState<'audio' | 'video'>('video')
@@ -21,8 +21,6 @@ export default function MessageBox() {
         fromName?: string;
         callType?: 'audio' | 'video';
     } | null>(null)
-
-    const receiverSocketId = selectedConversation ? userMap[selectedConversation._id] : "";
 
     useEffect(() => {
         if (!socket) return;
@@ -92,7 +90,7 @@ export default function MessageBox() {
             </footer>
 
             {/* <CallModal
-                userId={receiverSocketId}
+                userId={selectedConversation?._id}
                 isOpen={callModalOpen}
                 onClose={() => {
                     setCallModalOpen(false);

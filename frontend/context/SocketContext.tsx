@@ -1,57 +1,59 @@
-'use client';
+"use client";
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { io, Socket } from 'socket.io-client';
-import { useUserStore } from '@/store/userStore';
-
-type UserMap = { [userId: string]: string };
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { io, Socket } from "socket.io-client";
+import { useUserStore } from "@/store/userStore";
 
 type SocketContextType = {
-    socket: Socket | null;
-    onlineUsers: string[];
-    userMap: UserMap;
+  socket: Socket | null;
+  onlineUsers: string[];
 };
 
 const SocketContext = createContext<SocketContextType>({
-    socket: null,
-    onlineUsers: [],
-    userMap: {},
+  socket: null,
+  onlineUsers: [],
 });
 
-export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
-    const { user } = useUserStore();
-    const [socket, setSocket] = useState<Socket | null>(null);
-    const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
-    const [userMap, setUserMap] = useState<UserMap>({});
+export const SocketProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
+  const { user } = useUserStore();
 
-    useEffect(() => {
-        const newSocket = io('http://localhost:5000', {
-            query: { userId: user?._id },
-        });
+  const [socket, setSocket] = useState<Socket | null>(null);
+  const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
 
-        setSocket(newSocket);
+  useEffect(() => {
+    if (!user?._id) return;
 
-        newSocket.on('getonline', (users: UserMap) => {
-            setUserMap(users);
-            setOnlineUsers(Object.keys(users));
-        });
+    const newSocket = io("http://localhost:5000", {
+      query: {
+        userId: user._id,
+      },
+    });
 
-        return () => {
-            newSocket.disconnect();
-        };
-    }, [user]);
+    setSocket(newSocket);
 
-    return (
-        <SocketContext.Provider value={{ socket, onlineUsers, userMap }}>
-            {children}
-        </SocketContext.Provider>
-    );
+    newSocket.on("getonline", (users: string[]) => {
+      setOnlineUsers(users);
+    });
+
+    return () => {
+      newSocket.disconnect();
+    };
+  }, [user?._id]);
+
+  return (
+    <SocketContext.Provider
+      value={{
+        socket,
+        onlineUsers,
+      }}
+    >
+      {children}
+    </SocketContext.Provider>
+  );
 };
 
-export const useSocket = () => {
-    const context = useContext(SocketContext);
-    if (!context) {
-        throw new Error("useSocket must be used within a SocketProvider");
-    }
-    return context;
-};
+export const useSocket = () => useContext(SocketContext);
