@@ -5,8 +5,9 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import userRouter from "./routes/user.route";
 import messageRoute from "./routes/message.route";
-import followRoutes from "./routes/follow.routes";
-import groupRoutes from "./routes/group.routes";
+import followRoutes from "./routes/follow.route";
+import groupRoutes from "./routes/group.route";
+import friendRoutes from "./routes/friend.route";
 import { app, server } from "./socketio/server";
 
 dotenv.config();
@@ -35,6 +36,7 @@ app.use("/api/user", userRouter);
 app.use("/api/message", messageRoute);
 app.use("/api/follow", followRoutes);
 app.use("/api/group", groupRoutes);
+app.use("/api/friend", friendRoutes);
 
 app.get(
   "/api/health",
