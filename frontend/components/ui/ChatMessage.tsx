@@ -1,8 +1,8 @@
-import React from 'react';
-import clsx from 'clsx';
+import React from "react";
+import clsx from "clsx";
 
 type ChatMessageProps = {
-    message: string;
+    message?: string;
     timestamp?: string;
     isSender: boolean;
     avatarUrl?: string;
@@ -17,8 +17,8 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
     return (
         <div
             className={clsx(
-                'flex items-end mb-2',
-                isSender ? 'justify-end' : 'justify-start'
+                "flex items-end mb-2",
+                isSender ? "justify-end" : "justify-start"
             )}
         >
             {!isSender && avatarUrl && (
@@ -29,15 +29,18 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
                 />
             )}
 
-            <div className={clsx(
-                'max-w-xs px-4 py-2 text-sm',
-                isSender
-                    ? 'bg-blue-500 text-white rounded-l-2xl rounded-tr-3xl rounded-br-none'
-                    : 'bg-gray-200 text-black rounded-r-2xl rounded-tl-3xl rounded-bl-none'
-            )}>
-                <p>{message}</p>
+            <div
+                className={clsx(
+                    "max-w-xs px-4 py-2 text-sm",
+                    isSender
+                        ? "bg-blue-500 text-white rounded-l-2xl rounded-tr-3xl"
+                        : "bg-gray-200 text-black rounded-r-2xl rounded-tl-3xl"
+                )}
+            >
+                {<p>{message}</p>}
+
                 {timestamp && (
-                    <span className="text-[10px] block text-right text-gray-300 mt-1">
+                    <span className="text-[10px] block text-right text-gray-400 mt-1">
                         {timestamp}
                     </span>
                 )}

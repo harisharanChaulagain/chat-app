@@ -9,7 +9,7 @@ import { useSocket } from '@/context/SocketContext'
 import CallModal from './CallModal'
 
 export default function ChatWindow() {
-    const { selectedConversation } = useConversationStore()
+    const { selectedConversation, setTypingUser } = useConversationStore()
     const { onlineUsers, socket } = useSocket()
     const isOnline = selectedConversation ? onlineUsers.includes(selectedConversation._id) : false;
     const [callModalOpen, setCallModalOpen] = useState(false)
@@ -54,6 +54,25 @@ export default function ChatWindow() {
         setCallModalOpen(true)
         setIsIncomingCall(false)
     }
+
+    useEffect(() => {
+        if (!socket) return;
+        
+        const handleTyping = (data: any) => {
+            if (!data || typeof data !== "object") return;
+
+            if (data.isTyping) {
+                setTypingUser(data.userId);
+            } else {
+                setTypingUser(null);
+            }
+        };
+        socket.on("userTyping", handleTyping);
+
+        return () => {
+            socket.off("userTyping", handleTyping);
+        };
+    }, [socket]);
 
     return (
         <>

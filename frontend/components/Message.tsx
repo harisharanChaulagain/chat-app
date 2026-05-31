@@ -8,7 +8,7 @@ import useGetSocketMessage from "@/context/useGetSocketMessage";
 import { useUserStore } from "@/store/userStore";
 
 export default function Message() {
-  const { currentChatUser, messages, addMessagesAtStart } = useConversationStore();
+  const { currentChatUser, messages, addMessagesAtStart, typingUser, selectedConversation } = useConversationStore();
   const messageContainerRef = useRef<HTMLDivElement | null>(null);
   const [page, setPage] = useState(0);
   const limit = 15;
@@ -20,7 +20,7 @@ export default function Message() {
 
   useEffect(() => {
     if (data && data.messages?.length) {
-      addMessagesAtStart(data.messages); 
+      addMessagesAtStart(data.messages);
     }
   }, [data, addMessagesAtStart]);
 
@@ -62,7 +62,7 @@ export default function Message() {
   return (
     <div
       ref={messageContainerRef}
-      className="text-white overflow-y-auto max-h-[calc(100vh-200px)] px-4 py-2"
+      className="text-white overflow-y-auto max-h-[calc(100vh-150px)] px-4 py-2"
       onScroll={handleScroll}
     >
       {messages.map((msg) => (
@@ -77,6 +77,34 @@ export default function Message() {
           })}
         />
       ))}
+
+      {typingUser === selectedConversation?._id &&
+        <div
+          className="flex items-end mb-2justify-start"
+        >
+          <img
+            src="https://i.pravatar.cc/150?img=8"
+            alt="avatar"
+            className="w-8 h-8 rounded-full mr-2"
+          />
+          <div
+            className="max-w-xs px-4 py-2 text-sm bg-gray-200 text-black rounded-r-2xl rounded-tl-3xl"
+          >
+            <div className="flex gap-1 py-1">
+              <span className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" />
+              <span
+                className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"
+                style={{ animationDelay: "0.2s" }}
+              />
+              <span
+                className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"
+                style={{ animationDelay: "0.4s" }}
+              />
+            </div>
+          </div>
+
+        </div>}
+
     </div>
   );
 }

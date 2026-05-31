@@ -4,7 +4,7 @@ import { useSocket } from '@/context/SocketContext';
 import { useSendMessage } from '@/hooks/useSendMessage';
 import useConversationStore from '@/store/useConversationStore';
 import { Send } from 'lucide-react';
-import React, { useState, KeyboardEvent } from 'react';
+import React, { useState, KeyboardEvent, useRef } from 'react';
 
 const ChatBox = () => {
     const [message, setMessage] = useState('');
@@ -26,20 +26,28 @@ const ChatBox = () => {
     };
 
     const { socket } = useSocket();
-    let typingTimeout: NodeJS.Timeout | null = null;
+    const typingTimeout = useRef<NodeJS.Timeout | null>(null);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setMessage(e.target.value);
 
-        if (socket) {
-            if (typingTimeout) clearTimeout(typingTimeout);
+        if (!socket || !selectedConversation) return;
 
-            socket.emit("startTyping", "sender-id");
+        socket.emit("typing", {
+            receiverId: selectedConversation._id,
+            isTyping: true,
+        });
 
-            typingTimeout = setTimeout(() => {
-                socket.emit("stopTyping", "sender-id");
-            }, 1000);
+        if (typingTimeout.current) {
+            clearTimeout(typingTimeout.current);
         }
+
+        typingTimeout.current = setTimeout(() => {
+            socket.emit("typing", {
+                receiverId: selectedConversation._id,
+                isTyping: false,
+            });
+        }, 1000);
     };
 
     return (

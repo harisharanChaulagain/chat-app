@@ -5,21 +5,24 @@ type AvatarProps = {
     src: string;
     alt?: string;
     isOnline?: boolean;
-    size?: number; 
+    size?: number;
 };
 
 const Avatar: React.FC<AvatarProps> = ({
     src,
     alt = 'User Avatar',
     isOnline = false,
-    size = 48, 
+    size = 48,
 }) => {
     return (
-        <div className="relative inline-block" style={{ width: size, height: size }}>
+        <div
+            className="relative inline-block flex-shrink-0"
+            style={{ width: size, height: size }}
+        >
             <img
                 src={src}
                 alt={alt}
-                className="rounded-full object-cover w-full h-full"
+                className="rounded-full object-cover w-full h-full block flex-shrink-0"
             />
             <span
                 className={clsx(
