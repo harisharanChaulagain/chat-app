@@ -1,5 +1,5 @@
 import ChatList from '@/components/ChatList'
-import MessageBox from '@/components/ChatWindow'
+import ChatWindow from '@/components/ChatWindow'
 import React from 'react'
 
 export default function page() {
@@ -7,7 +7,7 @@ export default function page() {
         <div>
             <div className='w-full flex '>
                 <ChatList />
-                <MessageBox />
+                <ChatWindow />
             </div>
         </div>
     )
