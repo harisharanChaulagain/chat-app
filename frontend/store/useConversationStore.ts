@@ -51,7 +51,7 @@ const useConversationStore = create<ConversationState>((set) => ({
   addMessages: (newMessages) =>
     set((state) => ({
       messages: Array.isArray(newMessages)
-        ? [...state.messages, ...newMessages]
+        ? [...newMessages, ...state.messages]
         : state.messages,
     })),
 

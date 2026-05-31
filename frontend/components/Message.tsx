@@ -58,16 +58,15 @@ export default function Message() {
 
   if (isLoading && page === 0) return <div className="text-white p-4">Loading messages...</div>;
   if (error) return <div className="text-red-500 p-4">Failed to load messages.</div>;
-
   return (
     <div
       ref={messageContainerRef}
       className="text-white overflow-y-auto max-h-[calc(100vh-150px)] px-4 py-2"
       onScroll={handleScroll}
     >
-      {messages.map((msg) => (
+      {messages.map((msg, index) => (
         <ChatMessage
-          key={msg._id}
+          key={`${msg._id}-${index}`}
           message={msg.message}
           isSender={msg.senderId._id === user?._id}
           avatarUrl="https://i.pravatar.cc/150?img=8"
