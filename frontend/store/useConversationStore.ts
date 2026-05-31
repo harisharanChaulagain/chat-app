@@ -56,11 +56,17 @@ const useConversationStore = create<ConversationState>((set) => ({
     })),
 
   addMessagesAtStart: (newMessages) =>
-    set((state) => ({
-      messages: Array.isArray(newMessages)
-        ? [...newMessages, ...state.messages]
-        : state.messages,
-    })),
+    set((state) => {
+      const existingIds = new Set(state.messages.map((msg) => msg._id));
+
+      const uniqueMessages = newMessages.filter(
+        (msg) => !existingIds.has(msg._id)
+      );
+
+      return {
+        messages: [...uniqueMessages, ...state.messages],
+      };
+    }),
 
   currentChatUser: null,
   setCurrentChatuser: (userId) => set({ currentChatUser: userId }),

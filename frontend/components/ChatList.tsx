@@ -1,13 +1,13 @@
 "use client"
-import React, { useState } from 'react'
+import React from 'react'
 import ChatSearch from './ChatSearch'
 import Avatar from './ui/Avatar'
-import { useUserProfile } from '@/hooks/useUserProfile';
 import useConversationStore from '@/store/useConversationStore';
 import { useSocket } from '@/context/SocketContext';
+import { useFriendsProfile } from '@/hooks/useFriendsProfile';
 
 export default function ChatList() {
-    const { data, isLoading, error } = useUserProfile();
+    const { data, isLoading, error } = useFriendsProfile();
     const { selectedConversation, setSelectedConversation } = useConversationStore()
     const { socket, onlineUsers } = useSocket()
 

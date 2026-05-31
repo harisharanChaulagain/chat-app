@@ -17,7 +17,7 @@ export default function MessageBox() {
     const [isIncomingCall, setIsIncomingCall] = useState(false)
     const [incomingCallInfo, setIncomingCallInfo] = useState<{
         from?: string;
-        offer?: string;
+        offer?: RTCSessionDescriptionInit;
         fromName?: string;
         callType?: 'audio' | 'video';
     } | null>(null)
@@ -29,7 +29,7 @@ export default function MessageBox() {
 
         const handleIncomingCall = (data: {
             from: string;
-            offer: string;
+            offer: RTCSessionDescriptionInit;
             fromName: string;
             callType: 'audio' | 'video';
         }) => {
@@ -91,7 +91,7 @@ export default function MessageBox() {
                 <ChatBox />
             </footer>
 
-            <CallModal
+            {/* <CallModal
                 userId={receiverSocketId}
                 isOpen={callModalOpen}
                 onClose={() => {
@@ -103,7 +103,7 @@ export default function MessageBox() {
                 callerName={isIncomingCall ? incomingCallInfo?.fromName : selectedConversation?.name}
                 isIncomingCall={isIncomingCall}
                 incomingCallInfo={incomingCallInfo}
-            />
+            /> */}
         </main>
     )
 }

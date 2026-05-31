@@ -9,6 +9,7 @@ import { useUserStore } from "@/store/userStore";
 
 export default function Message() {
   const { currentChatUser, messages, addMessagesAtStart } = useConversationStore();
+  console.log("messages:",messages)
   const messageContainerRef = useRef<HTMLDivElement | null>(null);
   const [page, setPage] = useState(0);
   const limit = 15;
@@ -65,9 +66,9 @@ export default function Message() {
       className="text-white overflow-y-auto max-h-[calc(100vh-200px)] px-4 py-2"
       onScroll={handleScroll}
     >
-      {messages.map((msg, index) => (
+      {messages.map((msg) => (
         <ChatMessage
-          key={index}
+          key={msg._id}
           message={msg.message}
           isSender={msg.senderId._id === user?._id}
           avatarUrl="https://i.pravatar.cc/150?img=8"
