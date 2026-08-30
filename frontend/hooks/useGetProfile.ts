@@ -10,5 +10,7 @@ export const useGetProfile = (): UseQueryResult<User, Error> => {
       const { data } = await api.get("/user/profile");
       return data?.user;
     },
+    retry: false,
+    staleTime: 5 * 60 * 1000,
   });
 };

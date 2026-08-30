@@ -2,14 +2,22 @@
 
 import { useRouter } from "next/navigation";
 import { MessageCircle, Shield, Zap, Video, ArrowRight, Sparkles } from "lucide-react";
+import GuestGuard from "./components/GuestGuard";
 
-export default function LandingPage() {
+export default function Home() {
+  return (
+    <GuestGuard>
+      <LandingPage />
+    </GuestGuard>
+  );
+}
+
+function LandingPage() {
   const router = useRouter();
 
   return (
     <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] overflow-hidden relative">
 
-      {/* Background decorative elements */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
         <div className="absolute -top-40 -right-40 w-[600px] h-[600px] rounded-full bg-[radial-gradient(circle,rgba(139,92,246,0.12)_0%,transparent_70%)] animate-float" />
         <div className="absolute -bottom-60 -left-40 w-[500px] h-[500px] rounded-full bg-[radial-gradient(circle,rgba(6,182,212,0.1)_0%,transparent_70%)]" style={{ animation: 'float 4s ease-in-out infinite 1s' }} />
@@ -18,7 +26,6 @@ export default function LandingPage() {
         <div className="absolute top-1/4 left-1/5 w-1 h-1 rounded-full bg-violet-400 opacity-25" style={{ animation: 'float 4s ease-in-out infinite 2s' }} />
       </div>
 
-      {/* Header */}
       <header className="relative z-10 flex items-center justify-between px-8 py-6 max-w-7xl mx-auto animate-fade-in">
         <div className="flex items-center gap-3 cursor-pointer group" onClick={() => router.push("/")}>
           <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-gradient-to-br from-[var(--accent-start)] to-[var(--accent-end)] shadow-lg group-hover:shadow-[var(--shadow-glow)] transition-shadow duration-300">
@@ -46,9 +53,7 @@ export default function LandingPage() {
         </nav>
       </header>
 
-      {/* Hero Section */}
       <section className="relative z-10 flex flex-col items-center justify-center text-center px-6 pt-20 pb-28 max-w-4xl mx-auto">
-        {/* Badge */}
         <div className="animate-fade-in-up opacity-0" style={{ animationDelay: '100ms', animationFillMode: 'forwards' }}>
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-card text-sm text-[var(--text-secondary)] mb-8 cursor-default">
             <Sparkles className="w-4 h-4 text-[var(--accent-start)]" />
@@ -56,7 +61,6 @@ export default function LandingPage() {
           </div>
         </div>
 
-        {/* Headline */}
         <h1 className="text-5xl md:text-7xl font-extrabold leading-[1.1] tracking-tight animate-fade-in-up opacity-0" style={{ animationDelay: '200ms', animationFillMode: 'forwards' }}>
           Talk. Match. Connect.
           <br />
@@ -65,13 +69,11 @@ export default function LandingPage() {
           </span>
         </h1>
 
-        {/* Subtitle */}
         <p className="mt-6 text-[var(--text-secondary)] max-w-xl text-lg leading-relaxed animate-fade-in-up opacity-0" style={{ animationDelay: '350ms', animationFillMode: 'forwards' }}>
           A modern real-time chat & video platform where conversations happen
           only when both users agree. No spam. No strangers. Just real connections.
         </p>
 
-        {/* CTA Buttons */}
         <div className="mt-10 flex flex-col sm:flex-row gap-4 animate-fade-in-up opacity-0" style={{ animationDelay: '500ms', animationFillMode: 'forwards' }}>
           <button
             onClick={() => router.push("/signup")}
@@ -90,7 +92,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Features Section */}
       <section className="relative z-10 grid md:grid-cols-3 gap-6 px-6 pb-28 max-w-6xl mx-auto">
         {[
           {
@@ -133,11 +134,9 @@ export default function LandingPage() {
         ))}
       </section>
 
-      {/* CTA Banner */}
       <section className="relative z-10 py-24 animate-fade-in">
         <div className="max-w-3xl mx-auto text-center px-6">
           <div className="glass-card p-12 rounded-3xl relative overflow-hidden">
-            {/* Gradient accent behind */}
             <div className="absolute inset-0 bg-gradient-to-br from-[rgba(139,92,246,0.08)] to-[rgba(6,182,212,0.05)] pointer-events-none" />
 
             <h2 className="text-3xl md:text-4xl font-bold mb-4 relative z-10">
@@ -157,7 +156,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Footer */}
       <footer className="relative z-10 text-center py-8 border-t border-[var(--glass-border)]">
         <p className="text-[var(--text-muted)] text-sm">
           © {new Date().getFullYear()} ChatVerse. Built with 💜

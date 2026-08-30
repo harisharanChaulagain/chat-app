@@ -1,10 +1,11 @@
 import React from 'react'
 import Signup from '../components/Signup'
+import GuestGuard from '../components/GuestGuard'
 
 export default function page() {
     return (
-        <div>
+        <GuestGuard>
             <Signup />
-        </div>
+        </GuestGuard>
     )
 }
