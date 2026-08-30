@@ -4,6 +4,8 @@ import "./globals.css";
 import { Providers } from "./providers";
 import UserProfile from "./components/UserProfile";
 import { SocketProvider } from "@/context/SocketContext";
+import { CallProvider } from "@/context/CallContext";
+import CallModal from "@/components/CallModal";
 import { Toaster } from "react-hot-toast";
 
 const inter = Inter({
@@ -56,7 +58,11 @@ export default function RootLayout({
         />
         <Providers>
           <SocketProvider>
-            {children}
+            <CallProvider>
+              {children}
+              {/* Mounted globally so a call can ring in from any page */}
+              <CallModal />
+            </CallProvider>
           </SocketProvider>
           <UserProfile />
         </Providers>
