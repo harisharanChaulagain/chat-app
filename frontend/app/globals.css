@@ -80,6 +80,8 @@
 
 html {
   scroll-behavior: smooth;
+  /* Stops iOS Safari from re-flowing type when the device is rotated. */
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
@@ -91,6 +93,65 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+}
+
+/* Media never breaks a layout out of its container on narrow screens. */
+img,
+video,
+svg {
+  max-width: 100%;
+}
+
+/* ==============================
+   RESPONSIVE HELPERS
+   ============================== */
+
+/* `100vh` on mobile Safari/Chrome includes the retracting URL bar, so a
+   full-height app shell ends up taller than the visible viewport. `dvh`
+   tracks the real one; the `vh` line stays as a fallback for old browsers. */
+.h-screen-dvh {
+  height: 100vh;
+  height: 100dvh;
+}
+
+.min-h-screen-dvh {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+/* Clears the iOS home-bar / Android gesture area for bottom-docked UI.
+   These are unlayered, so they beat Tailwind's `p-*`/`m-*` utilities — apply
+   them only to elements that declare no bottom padding/margin of their own
+   (wrap the padded element instead), and use them unprefixed, since Tailwind
+   can't build `sm:`-style variants for hand-written classes. */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.mb-safe {
+  margin-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Height of the mobile bottom nav plus the safe area beneath it — used as
+   scroll padding so the last row of content is never trapped under the bar. */
+.pb-mobile-nav {
+  padding-bottom: calc(4.5rem + env(safe-area-inset-bottom, 0px));
+}
+
+@media (min-width: 768px) {
+  .pb-mobile-nav {
+    padding-bottom: 0;
+  }
+}
+
+/* Horizontal filter/tab strips: scrollable, but without a visible bar. */
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
 
 /* ==============================
@@ -428,31 +489,44 @@ body {
    INPUT STYLING
    ============================== */
 
-.input-dark {
-  width: 100%;
-  padding: 12px 16px;
-  background: var(--bg-tertiary);
-  border: 1px solid var(--glass-border);
-  border-radius: var(--radius-md);
-  color: var(--text-primary);
-  font-family: inherit;
-  font-size: 0.9375rem;
-  outline: none;
-  transition: border-color var(--transition-base), box-shadow var(--transition-base);
-}
+/* Inside `@layer components` so Tailwind's own padding utilities still win —
+   the fields that carry a leading icon rely on `pl-11` beating the shorthand
+   `padding` below, which an unlayered rule would have overridden. */
+@layer components {
+  .input-dark {
+    width: 100%;
+    padding: 12px 16px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-family: inherit;
+    /* iOS Safari zooms the viewport when a focused input is under 16px, so
+       touch widths get the full 16px and only desktop drops to 15px. */
+    font-size: 1rem;
+    outline: none;
+    transition: border-color var(--transition-base), box-shadow var(--transition-base);
+  }
 
-.input-dark::placeholder {
-  color: var(--text-muted);
-}
+  @media (min-width: 768px) {
+    .input-dark {
+      font-size: 0.9375rem;
+    }
+  }
 
-.input-dark:focus {
-  border-color: var(--accent-start);
-  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15);
-}
+  .input-dark::placeholder {
+    color: var(--text-muted);
+  }
 
-.input-dark.input-error {
-  border-color: var(--color-error);
-  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+  .input-dark:focus {
+    border-color: var(--accent-start);
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15);
+  }
+
+  .input-dark.input-error {
+    border-color: var(--color-error);
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+  }
 }
 
 /* ==============================
@@ -460,8 +534,41 @@ body {
    ============================== */
 
 .video_player {
-  width: 300px;
-  height: 200px;
+  width: 100%;
+  max-width: 300px;
+  aspect-ratio: 3 / 2;
+  height: auto;
   border-radius: var(--radius-md);
   border: 1px solid var(--glass-border);
+}
+
+/* ==============================
+   MOTION PREFERENCES
+   ============================== */
+
+/* The landing/friends pages lean on entrance animations and floating blobs;
+   honour a reduced-motion request instead of animating regardless. */
+@media (prefers-reduced-motion: reduce) {
+
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  /* Elements that animate in from `opacity-0` must still end up visible. */
+  .animate-fade-in,
+  .animate-fade-in-up,
+  .animate-slide-up,
+  .animate-slide-left,
+  .animate-slide-right {
+    opacity: 1 !important;
+    transform: none !important;
+  }
 }

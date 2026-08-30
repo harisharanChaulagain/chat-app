@@ -185,31 +185,31 @@ const FriendsPage = () => {
   };
 
   return (
-    <main className="flex h-screen w-full overflow-hidden bg-[var(--bg-primary)] text-[var(--text-primary)]">
+    <main className="flex h-screen-dvh w-full overflow-hidden bg-[var(--bg-primary)] text-[var(--text-primary)]">
       <Sidebar />
 
       <div className="relative flex min-w-0 flex-1 flex-col">
         {/* Ambient background glows */}
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
-          <div className="absolute -right-40 -top-48 h-[520px] w-[520px] rounded-full bg-[radial-gradient(circle,rgba(139,92,246,0.12)_0%,transparent_70%)] animate-float" />
+          <div className="absolute -right-40 -top-48 h-[320px] w-[320px] rounded-full bg-[radial-gradient(circle,rgba(139,92,246,0.12)_0%,transparent_70%)] animate-float sm:h-[520px] sm:w-[520px]" />
           <div
-            className="absolute -bottom-56 -left-32 h-[440px] w-[440px] rounded-full bg-[radial-gradient(circle,rgba(6,182,212,0.09)_0%,transparent_70%)]"
+            className="absolute -bottom-56 -left-32 h-[280px] w-[280px] rounded-full bg-[radial-gradient(circle,rgba(6,182,212,0.09)_0%,transparent_70%)] sm:h-[440px] sm:w-[440px]"
             style={{ animation: "float 4s ease-in-out infinite 1s" }}
           />
         </div>
 
         {/* Header */}
-        <header className="relative z-10 flex-shrink-0 border-b border-[var(--glass-border)] bg-[var(--bg-secondary)]/60 px-6 pb-5 pt-7 backdrop-blur-xl md:px-10">
+        <header className="relative z-10 flex-shrink-0 border-b border-[var(--glass-border)] bg-[var(--bg-secondary)]/60 px-4 pb-4 pt-5 backdrop-blur-xl sm:px-6 md:px-10 md:pb-5 md:pt-7">
           <div className="mx-auto max-w-6xl">
-            <div className="flex flex-wrap items-start justify-between gap-4">
+            <div className="flex flex-wrap items-start justify-between gap-3 sm:gap-4">
               <div className="animate-fade-in">
-                <h1 className="flex items-center gap-3 text-2xl font-bold tracking-tight md:text-3xl">
-                  <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--accent-start)] to-[var(--accent-end)] shadow-[var(--shadow-glow)]">
-                    <Users className="h-5 w-5 text-white" />
+                <h1 className="flex items-center gap-2.5 text-xl font-bold tracking-tight sm:gap-3 sm:text-2xl md:text-3xl">
+                  <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--accent-start)] to-[var(--accent-end)] shadow-[var(--shadow-glow)] sm:h-10 sm:w-10">
+                    <Users className="h-4.5 w-4.5 text-white sm:h-5 sm:w-5" />
                   </span>
                   Discover <span className="gradient-text">People</span>
                 </h1>
-                <p className="mt-2 text-sm text-[var(--text-secondary)]">
+                <p className="mt-2 max-w-prose text-xs text-[var(--text-secondary)] sm:text-sm">
                   Follow someone back to unlock mutual chats, voice and video calls.
                 </p>
               </div>
@@ -217,22 +217,25 @@ const FriendsPage = () => {
               <button
                 onClick={() => refetch()}
                 disabled={isFetching}
-                className="flex items-center gap-2 rounded-xl border border-[var(--glass-border)] bg-[var(--glass-bg)] px-4 py-2.5 text-sm font-medium text-[var(--text-secondary)] transition-all duration-200 hover:border-[var(--glass-border-hover)] hover:bg-[var(--glass-bg-strong)] hover:text-[var(--text-primary)] disabled:cursor-not-allowed disabled:opacity-60"
+                aria-label="Refresh people"
+                className="flex flex-shrink-0 items-center gap-2 rounded-xl border border-[var(--glass-border)] bg-[var(--glass-bg)] px-3 py-2 text-sm font-medium text-[var(--text-secondary)] transition-all duration-200 hover:border-[var(--glass-border-hover)] hover:bg-[var(--glass-bg-strong)] hover:text-[var(--text-primary)] disabled:cursor-not-allowed disabled:opacity-60 sm:px-4 sm:py-2.5"
               >
                 <RefreshCw
                   className={`h-4 w-4 ${isFetching ? "animate-spin" : ""}`}
                 />
-                Refresh
+                {/* Label collapses to an icon-only button on the narrowest phones. */}
+                <span className="hidden sm:inline">Refresh</span>
               </button>
             </div>
 
             {/* Search */}
-            <div className="relative mt-6 max-w-md">
+            <div className="relative mt-5 w-full max-w-md sm:mt-6">
               <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-muted)]" />
               <input
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
                 placeholder="Search by name or email…"
+                aria-label="Search people"
                 className="input-dark pl-11 pr-10"
               />
               {query && (
@@ -246,15 +249,15 @@ const FriendsPage = () => {
               )}
             </div>
 
-            {/* Filter pills */}
-            <div className="-mx-1 mt-5 flex gap-2 overflow-x-auto px-1 pb-1">
+            {/* Filter pills — horizontally scrollable on narrow screens */}
+            <div className="-mx-1 mt-4 flex gap-2 overflow-x-auto px-1 pb-1 no-scrollbar sm:mt-5">
               {FILTERS.map((item) => {
                 const isActive = filter === item.key;
                 return (
                   <button
                     key={item.key}
                     onClick={() => setFilter(item.key)}
-                    className={`flex flex-shrink-0 items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-all duration-200 ${
+                    className={`flex flex-shrink-0 items-center gap-2 rounded-full px-3.5 py-2 text-xs font-medium transition-all duration-200 sm:px-4 sm:text-sm ${
                       isActive
                         ? "bg-gradient-to-r from-[var(--accent-start)] to-[var(--accent-mid)] text-white shadow-[var(--shadow-glow)]"
                         : "border border-[var(--glass-border)] text-[var(--text-secondary)] hover:border-[var(--glass-border-hover)] hover:bg-[var(--glass-bg)] hover:text-[var(--text-primary)]"
@@ -277,8 +280,8 @@ const FriendsPage = () => {
           </div>
         </header>
 
-        {/* Body */}
-        <div className="relative z-10 flex-1 overflow-y-auto px-6 py-7 md:px-10">
+        {/* Body — extra bottom padding on mobile clears the fixed tab bar */}
+        <div className="relative z-10 min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-5 pb-mobile-nav sm:px-6 md:px-10 md:py-7">
           <div className="mx-auto max-w-6xl">
             {isPending && <CardSkeletonGrid />}
 
@@ -339,7 +342,7 @@ const FriendsPage = () => {
             )}
 
             {!isPending && !error && visibleUsers.length > 0 && (
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 xl:grid-cols-3 2xl:grid-cols-4">
                 {visibleUsers.map((user, index) => (
                   <PersonCard
                     key={user._id}
@@ -388,7 +391,7 @@ const PersonCard = ({
 
   return (
     <article
-      className="glass-card group relative overflow-hidden rounded-2xl p-5 opacity-0 animate-fade-in-up"
+      className="glass-card group relative overflow-hidden rounded-2xl p-4 opacity-0 animate-fade-in-up sm:p-5"
       style={{
         animationDelay: `${Math.min(index, 11) * 45}ms`,
         animationFillMode: "forwards",
@@ -398,12 +401,12 @@ const PersonCard = ({
       <div className="pointer-events-none absolute inset-0 bg-[var(--gradient-subtle)] opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
       <div className="relative z-10">
-        <div className="flex items-start gap-4">
+        <div className="flex items-start gap-3 sm:gap-4">
           <div className="relative flex-shrink-0">
             <div
-              className={`flex h-[52px] w-[52px] items-center justify-center rounded-2xl bg-gradient-to-br ${gradientFor(
+              className={`flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br ${gradientFor(
                 user._id
-              )} text-base font-bold text-white shadow-[var(--shadow-md)] transition-transform duration-300 group-hover:scale-105`}
+              )} text-base font-bold text-white shadow-[var(--shadow-md)] transition-transform duration-300 group-hover:scale-105 sm:h-[52px] sm:w-[52px]`}
             >
               {initialsOf(user.name)}
             </div>
@@ -446,7 +449,7 @@ const PersonCard = ({
           </div>
         </div>
 
-        <div className="mt-5 flex items-center gap-2">
+        <div className="mt-4 flex items-center gap-2 sm:mt-5">
           <ActionButtons
             status={status}
             user={user}
@@ -518,6 +521,10 @@ const ActionButtons = ({
         <button
           onClick={() => onCancel(user._id)}
           disabled={isBusy}
+          /* The label only swaps on hover, which touch devices never fire —
+             the aria-label/title carry the intent there. */
+          aria-label={`Cancel follow request to ${user.name}`}
+          title={`Cancel follow request to ${user.name}`}
           className="group/btn flex w-full items-center justify-center gap-2 rounded-xl border border-[rgba(245,158,11,0.25)] bg-[rgba(245,158,11,0.1)] px-4 py-2.5 text-sm font-medium text-[var(--color-warning)] transition-all duration-200 hover:border-[rgba(239,68,68,0.3)] hover:bg-[rgba(239,68,68,0.1)] hover:text-[var(--color-error)] disabled:cursor-not-allowed disabled:opacity-60"
         >
           {isBusy ? (
@@ -553,21 +560,21 @@ const ActionButtons = ({
 };
 
 const CardSkeletonGrid = () => (
-  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 xl:grid-cols-3 2xl:grid-cols-4">
     {Array.from({ length: 6 }).map((_, index) => (
       <div
         key={index}
-        className="rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-bg)] p-5"
+        className="rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-bg)] p-4 sm:p-5"
       >
-        <div className="flex items-start gap-4">
-          <div className="h-[52px] w-[52px] flex-shrink-0 overflow-hidden rounded-2xl bg-[var(--bg-elevated)] animate-shimmer" />
-          <div className="flex-1 space-y-2.5 pt-1">
+        <div className="flex items-start gap-3 sm:gap-4">
+          <div className="h-12 w-12 flex-shrink-0 overflow-hidden rounded-2xl bg-[var(--bg-elevated)] animate-shimmer sm:h-[52px] sm:w-[52px]" />
+          <div className="min-w-0 flex-1 space-y-2.5 pt-1">
             <div className="h-4 w-2/5 rounded bg-[var(--bg-elevated)] animate-shimmer" />
             <div className="h-3 w-4/5 rounded bg-[var(--bg-elevated)] animate-shimmer" />
             <div className="h-3 w-1/4 rounded bg-[var(--bg-elevated)] animate-shimmer" />
           </div>
         </div>
-        <div className="mt-5 h-[42px] w-full rounded-xl bg-[var(--bg-elevated)] animate-shimmer" />
+        <div className="mt-4 h-[42px] w-full rounded-xl bg-[var(--bg-elevated)] animate-shimmer sm:mt-5" />
       </div>
     ))}
   </div>
@@ -584,11 +591,11 @@ const StateCard = ({
   description: string;
   action?: React.ReactNode;
 }) => (
-  <div className="flex flex-col items-center justify-center py-20 text-center animate-fade-in">
-    <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-bg)]">
+  <div className="flex flex-col items-center justify-center px-2 py-14 text-center animate-fade-in sm:py-20">
+    <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-bg)] sm:mb-5 sm:h-16 sm:w-16">
       {icon}
     </div>
-    <h3 className="text-lg font-semibold text-[var(--text-primary)]">{title}</h3>
+    <h3 className="text-base font-semibold text-[var(--text-primary)] sm:text-lg">{title}</h3>
     <p className="mt-2 max-w-sm text-sm leading-relaxed text-[var(--text-secondary)]">
       {description}
     </p>

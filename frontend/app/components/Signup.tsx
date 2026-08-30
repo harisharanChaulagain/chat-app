@@ -67,31 +67,34 @@ export default function Signup() {
                     window.location.href = '/login';
                 }, 1500);
             },
-            onError: (error: any) => {
+            onError: (error: Error) => {
                 setIsLoading(false);
                 const errorMessage =
-                    error.response?.data?.message || 'Signup failed. Please try again.';
+                    (error as { response?: { data?: { message?: string } } }).response
+                        ?.data?.message || 'Signup failed. Please try again.';
                 toast.error(errorMessage);
             },
         });
     };
 
+    // `overflow-x-hidden` (not `overflow-hidden`) so a short landscape viewport
+    // can still scroll this taller form into view.
     return (
-        <div className="min-h-screen bg-[var(--bg-primary)] flex items-center justify-center p-4 relative overflow-hidden">
+        <div className="min-h-screen-dvh bg-[var(--bg-primary)] flex items-center justify-center px-4 py-8 sm:py-10 relative overflow-x-hidden">
 
             {/* Background glows */}
             <div className="fixed inset-0 pointer-events-none overflow-hidden">
-                <div className="absolute -top-40 -left-40 w-[500px] h-[500px] rounded-full bg-[radial-gradient(circle,rgba(6,182,212,0.1)_0%,transparent_70%)] animate-float" />
-                <div className="absolute -bottom-40 -right-40 w-[500px] h-[500px] rounded-full bg-[radial-gradient(circle,rgba(139,92,246,0.08)_0%,transparent_70%)]" style={{ animation: 'float 4s ease-in-out infinite 1s' }} />
+                <div className="absolute -top-40 -left-40 w-[320px] h-[320px] sm:w-[500px] sm:h-[500px] rounded-full bg-[radial-gradient(circle,rgba(6,182,212,0.1)_0%,transparent_70%)] animate-float" />
+                <div className="absolute -bottom-40 -right-40 w-[320px] h-[320px] sm:w-[500px] sm:h-[500px] rounded-full bg-[radial-gradient(circle,rgba(139,92,246,0.08)_0%,transparent_70%)]" style={{ animation: 'float 4s ease-in-out infinite 1s' }} />
             </div>
 
             <div className="w-full max-w-md relative z-10">
                 {/* Logo + heading */}
-                <div className="text-center mb-8 animate-fade-in-up opacity-0" style={{ animationDelay: '100ms', animationFillMode: 'forwards' }}>
-                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-[var(--accent-end)] to-[var(--accent-start)] shadow-[var(--shadow-glow)] mb-5">
-                        <MessageCircle className="w-8 h-8 text-white" />
+                <div className="text-center mb-6 sm:mb-8 animate-fade-in-up opacity-0" style={{ animationDelay: '100ms', animationFillMode: 'forwards' }}>
+                    <div className="inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-[var(--accent-end)] to-[var(--accent-start)] shadow-[var(--shadow-glow)] mb-4 sm:mb-5">
+                        <MessageCircle className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
                     </div>
-                    <h1 className="text-3xl font-bold mb-2">
+                    <h1 className="text-2xl sm:text-3xl font-bold mb-2">
                         Create <span className="gradient-text">Account</span>
                     </h1>
                     <p className="text-[var(--text-secondary)] text-sm">Join ChatVerse and start connecting</p>
@@ -100,7 +103,7 @@ export default function Signup() {
                 {/* Form card */}
                 <form
                     onSubmit={handleSubmit(onSubmit)}
-                    className="glass-card p-8 space-y-5 animate-fade-in-up opacity-0"
+                    className="glass-card p-5 space-y-4 sm:p-8 sm:space-y-5 animate-fade-in-up opacity-0"
                     style={{ animationDelay: '250ms', animationFillMode: 'forwards' }}
                 >
                     {/* Name field */}

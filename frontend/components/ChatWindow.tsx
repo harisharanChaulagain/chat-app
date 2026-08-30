@@ -3,13 +3,13 @@ import React, { useEffect } from 'react'
 import Avatar from './ui/Avatar'
 import Message from './Message'
 import ChatBox from './ui/ChatBox'
-import { MessageSquareMore, Phone, Video } from 'lucide-react'
+import { ArrowLeft, MessageSquareMore, Phone, Video } from 'lucide-react'
 import useConversationStore from '@/store/useConversationStore'
 import { useSocket } from '@/context/SocketContext'
 import { useCall } from '@/context/CallContext'
 
 export default function ChatWindow() {
-    const { selectedConversation, setTypingUser } = useConversationStore()
+    const { selectedConversation, setSelectedConversation, setTypingUser } = useConversationStore()
     const { onlineUsers, socket } = useSocket()
     const { startCall, status: callStatus } = useCall()
     const isOnline = selectedConversation ? onlineUsers.includes(selectedConversation._id) : false;
@@ -25,7 +25,7 @@ export default function ChatWindow() {
 
     useEffect(() => {
         if (!socket) return;
-        
+
         const handleTyping = (data: { userId?: string; isTyping?: boolean } | null) => {
             if (!data || typeof data !== "object") return;
 
@@ -42,68 +42,90 @@ export default function ChatWindow() {
         };
     }, [socket]);
 
-    return (
-        <>
-            {selectedConversation ?
-                < main className='relative w-[70%] h-screen bg-slate-950 flex flex-col justify-between'>
-                    <header className="flex items-center justify-between px-6 py-4 space-x-4 text-white bg-slate-600">
-                        <section className='flex space-x-4'>
-                            <Avatar src='https://i.pravatar.cc/150?img=4' isOnline={isOnline} size={48} />
-                            <div>
-                                <h1 className="font-semibold">{selectedConversation?.name}</h1>
-                                <span className="text-sm text-slate-300">{isOnline ? "Online" : "Offline"}</span>
-                            </div>
-                        </section>
-                        <section className='flex items-center gap-2'>
-                            <button
-                                type='button'
-                                onClick={() => handleCall('audio')}
-                                disabled={!canCall}
-                                title={isOnline ? 'Start audio call' : `${selectedConversation?.name} is offline`}
-                                aria-label='Start audio call'
-                                className='p-2 rounded-full hover:bg-slate-700 transition disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent cursor-pointer'
-                            >
-                                <Phone size={20} />
-                            </button>
-                            <button
-                                type='button'
-                                onClick={() => handleCall('video')}
-                                disabled={!canCall}
-                                title={isOnline ? 'Start video call' : `${selectedConversation?.name} is offline`}
-                                aria-label='Start video call'
-                                className='p-2 rounded-full hover:bg-slate-700 transition disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent cursor-pointer'
-                            >
-                                <Video size={20} />
-                            </button>
-                        </section>
-                    </header>
+    /* Mobile: only rendered while a thread is open (it replaces the list).
+       Tablet and up: always visible, showing the empty state when idle. */
+    const paneClasses = `h-full min-h-0 min-w-0 flex-1 flex-col bg-slate-950 md:flex ${
+        selectedConversation ? 'flex' : 'hidden'
+    }`
 
-                    <section className="relative h-full">
-                        <Message />
-                    </section>
+    if (!selectedConversation) {
+        return (
+            <div className={`${paneClasses} items-center justify-center border-l border-slate-800 p-6`}>
+                <div className="flex flex-col items-center text-center">
+                    <MessageSquareMore
+                        className="mb-5 h-16 w-16 text-slate-700 sm:mb-6 sm:h-[90px] sm:w-[90px]"
+                    />
 
-                    <footer>
-                        <ChatBox />
-                    </footer>
+                    <h1 className="text-2xl font-semibold text-white sm:text-3xl">
+                        Welcome to Chat
+                    </h1>
 
-                </ main> :
-                <div className="w-[70%] h-screen bg-slate-950 flex items-center justify-center border-l border-slate-800">
-                    <div className="flex flex-col items-center">
-                        <MessageSquareMore
-                            size={90}
-                            className="text-slate-700 mb-6"
-                        />
-
-                        <h1 className="text-3xl font-semibold text-white">
-                            Welcome to Chat
-                        </h1>
-
-                        <p className="mt-3 text-slate-400 text-center max-w-sm">
-                            Select a conversation from the left panel to start messaging.
-                        </p>
-                    </div>
+                    <p className="mt-3 max-w-sm text-sm text-slate-400 sm:text-base">
+                        Select a conversation from the left panel to start messaging.
+                    </p>
                 </div>
-            }
-        </>
+            </div>
+        )
+    }
+
+    return (
+        <main className={`relative ${paneClasses}`}>
+            <header className="flex flex-shrink-0 items-center justify-between gap-2 bg-slate-600 px-3 py-3 text-white sm:px-6 sm:py-4">
+                <section className='flex min-w-0 flex-1 items-center gap-2 sm:gap-4'>
+                    {/* Back to the list — mobile only, where the panes swap */}
+                    <button
+                        type='button'
+                        onClick={() => setSelectedConversation(null)}
+                        aria-label='Back to chats'
+                        className='-ml-1 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full transition hover:bg-slate-700 md:hidden'
+                    >
+                        <ArrowLeft size={20} />
+                    </button>
+
+                    <Avatar src='https://i.pravatar.cc/150?img=4' isOnline={isOnline} size={40} />
+                    <div className="min-w-0">
+                        <h1 className="truncate font-semibold">{selectedConversation?.name}</h1>
+                        <span className="block truncate text-xs text-slate-300 sm:text-sm">
+                            {isOnline ? "Online" : "Offline"}
+                        </span>
+                    </div>
+                </section>
+
+                <section className='flex flex-shrink-0 items-center gap-1 sm:gap-2'>
+                    <button
+                        type='button'
+                        onClick={() => handleCall('audio')}
+                        disabled={!canCall}
+                        title={isOnline ? 'Start audio call' : `${selectedConversation?.name} is offline`}
+                        aria-label='Start audio call'
+                        className='flex h-10 w-10 cursor-pointer items-center justify-center rounded-full transition hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent'
+                    >
+                        <Phone size={20} />
+                    </button>
+                    <button
+                        type='button'
+                        onClick={() => handleCall('video')}
+                        disabled={!canCall}
+                        title={isOnline ? 'Start video call' : `${selectedConversation?.name} is offline`}
+                        aria-label='Start video call'
+                        className='flex h-10 w-10 cursor-pointer items-center justify-center rounded-full transition hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent'
+                    >
+                        <Video size={20} />
+                    </button>
+                </section>
+            </header>
+
+            {/* min-h-0 lets the scroll area shrink instead of pushing the composer
+                off-screen — the old fixed `calc(100vh - 150px)` cap drifted
+                whenever the header or composer changed height. */}
+            <Message />
+
+            {/* `pb-safe` sits on the wrapper rather than the composer itself, so
+                the iOS home-bar strip is filled with the composer's background
+                instead of eating its padding. */}
+            <footer className="flex-shrink-0 bg-slate-900 pb-safe">
+                <ChatBox />
+            </footer>
+        </main>
     )
 }

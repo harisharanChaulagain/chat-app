@@ -8,7 +8,7 @@ import useGetSocketMessage from "@/context/useGetSocketMessage";
 import { useUserStore } from "@/store/userStore";
 
 export default function Message() {
-  const { currentChatUser, messages, addMessagesAtStart, typingUser, selectedConversation } = useConversationStore();
+  const { messages, addMessagesAtStart, typingUser, selectedConversation } = useConversationStore();
   const messageContainerRef = useRef<HTMLDivElement | null>(null);
   const [page, setPage] = useState(0);
   const limit = 15;
@@ -46,7 +46,7 @@ export default function Message() {
   const handleScroll = useCallback(
     (event: React.UIEvent<HTMLDivElement>) => {
       const container = event.currentTarget;
-      const { scrollTop, scrollHeight } = container;
+      const { scrollTop } = container;
 
       if (scrollTop <= 10 && !isLoading && data?.totalPages && page < data.totalPages - 1) {
         setPrevScrollHeight(container.scrollHeight);
@@ -56,12 +56,22 @@ export default function Message() {
     [data, isLoading, page]
   );
 
-  if (isLoading && page === 0) return <div className="text-white p-4">Loading messages...</div>;
-  if (error) return <div className="text-red-500 p-4">Failed to load messages.</div>;
+  if (isLoading && page === 0)
+    return (
+      <div className="min-h-0 flex-1 p-4 text-sm text-slate-400">
+        Loading messages...
+      </div>
+    );
+  if (error)
+    return (
+      <div className="min-h-0 flex-1 p-4 text-sm text-red-500">
+        Failed to load messages.
+      </div>
+    );
   return (
     <div
       ref={messageContainerRef}
-      className="text-white overflow-y-auto max-h-[calc(100vh-150px)] px-4 py-2"
+      className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 py-2 text-white sm:px-4"
       onScroll={handleScroll}
     >
       {messages.map((msg, index) => (
@@ -79,15 +89,15 @@ export default function Message() {
 
       {typingUser === selectedConversation?._id &&
         <div
-          className="flex items-end mb-2justify-start"
+          className="mb-2 flex items-end justify-start"
         >
           <img
             src="https://i.pravatar.cc/150?img=8"
             alt="avatar"
-            className="w-8 h-8 rounded-full mr-2"
+            className="mr-2 h-8 w-8 flex-shrink-0 rounded-full"
           />
           <div
-            className="max-w-xs px-4 py-2 text-sm bg-gray-200 text-black rounded-r-2xl rounded-tl-3xl"
+            className="max-w-[75%] rounded-r-2xl rounded-tl-3xl bg-gray-200 px-4 py-2 text-sm text-black"
           >
             <div className="flex gap-1 py-1">
               <span className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" />

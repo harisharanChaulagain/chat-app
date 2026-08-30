@@ -64,9 +64,11 @@ export default function Login() {
                     window.location.href = '/chats';
                 }, 1500);
             },
-            onError: (error: any) => {
+            onError: (error: Error) => {
                 setIsLoading(false);
-                const errorMessage = error.response?.data?.message || 'Login failed. Please try again.';
+                const errorMessage =
+                    (error as { response?: { data?: { message?: string } } }).response
+                        ?.data?.message || 'Login failed. Please try again.';
                 toast.error(errorMessage, {
                     duration: 4000,
                     position: 'top-right',
@@ -75,22 +77,24 @@ export default function Login() {
         });
     };
 
+    // `overflow-x-hidden` (not `overflow-hidden`) so a short landscape viewport
+    // can still scroll the card into view.
     return (
-        <div className="min-h-screen bg-[var(--bg-primary)] flex items-center justify-center p-4 relative overflow-hidden">
+        <div className="min-h-screen-dvh bg-[var(--bg-primary)] flex items-center justify-center px-4 py-8 sm:py-10 relative overflow-x-hidden">
 
             {/* Background glows */}
             <div className="fixed inset-0 pointer-events-none overflow-hidden">
-                <div className="absolute -top-40 -right-40 w-[500px] h-[500px] rounded-full bg-[radial-gradient(circle,rgba(139,92,246,0.1)_0%,transparent_70%)] animate-float" />
-                <div className="absolute -bottom-40 -left-40 w-[500px] h-[500px] rounded-full bg-[radial-gradient(circle,rgba(6,182,212,0.08)_0%,transparent_70%)]" style={{ animation: 'float 4s ease-in-out infinite 1s' }} />
+                <div className="absolute -top-40 -right-40 w-[320px] h-[320px] sm:w-[500px] sm:h-[500px] rounded-full bg-[radial-gradient(circle,rgba(139,92,246,0.1)_0%,transparent_70%)] animate-float" />
+                <div className="absolute -bottom-40 -left-40 w-[320px] h-[320px] sm:w-[500px] sm:h-[500px] rounded-full bg-[radial-gradient(circle,rgba(6,182,212,0.08)_0%,transparent_70%)]" style={{ animation: 'float 4s ease-in-out infinite 1s' }} />
             </div>
 
             <div className="w-full max-w-md relative z-10">
                 {/* Logo + heading */}
-                <div className="text-center mb-8 animate-fade-in-up opacity-0" style={{ animationDelay: '100ms', animationFillMode: 'forwards' }}>
-                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-[var(--accent-start)] to-[var(--accent-end)] shadow-[var(--shadow-glow)] mb-5">
-                        <MessageCircle className="w-8 h-8 text-white" />
+                <div className="text-center mb-6 sm:mb-8 animate-fade-in-up opacity-0" style={{ animationDelay: '100ms', animationFillMode: 'forwards' }}>
+                    <div className="inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-[var(--accent-start)] to-[var(--accent-end)] shadow-[var(--shadow-glow)] mb-4 sm:mb-5">
+                        <MessageCircle className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
                     </div>
-                    <h1 className="text-3xl font-bold mb-2">
+                    <h1 className="text-2xl sm:text-3xl font-bold mb-2">
                         Welcome <span className="gradient-text">Back</span>
                     </h1>
                     <p className="text-[var(--text-secondary)] text-sm">Sign in to your account to continue</p>
@@ -99,7 +103,7 @@ export default function Login() {
                 {/* Form card */}
                 <form
                     onSubmit={handleSubmit(onSubmit)}
-                    className="glass-card p-8 space-y-5 animate-fade-in-up opacity-0"
+                    className="glass-card p-5 space-y-4 sm:p-8 sm:space-y-5 animate-fade-in-up opacity-0"
                     style={{ animationDelay: '250ms', animationFillMode: 'forwards' }}
                 >
                     {/* Email field */}
@@ -161,20 +165,20 @@ export default function Login() {
                         )}
                     </div>
 
-                    {/* Remember + Forgot */}
-                    <div className="flex items-center justify-between">
+                    {/* Remember + Forgot — wraps rather than overflowing on tiny screens */}
+                    <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
                         <label className="flex items-center gap-2 cursor-pointer group">
                             <input
                                 type="checkbox"
                                 checked={rememberMe}
                                 onChange={(e) => setRememberMe(e.target.checked)}
-                                className="w-4 h-4 rounded border-[var(--glass-border)] bg-[var(--bg-tertiary)] text-[var(--accent-start)] focus:ring-[var(--accent-start)] focus:ring-offset-0 cursor-pointer accent-[var(--accent-start)]"
+                                className="w-4 h-4 flex-shrink-0 rounded border-[var(--glass-border)] bg-[var(--bg-tertiary)] text-[var(--accent-start)] focus:ring-[var(--accent-start)] focus:ring-offset-0 cursor-pointer accent-[var(--accent-start)]"
                             />
-                            <span className="text-sm text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors">Remember me</span>
+                            <span className="text-[13px] sm:text-sm text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors">Remember me</span>
                         </label>
                         <a
                             href="/forgot-password"
-                            className="text-sm text-[var(--accent-start)] hover:text-[var(--accent-end)] transition-colors"
+                            className="text-[13px] sm:text-sm text-[var(--accent-start)] hover:text-[var(--accent-end)] transition-colors"
                         >
                             Forgot password?
                         </a>
@@ -217,7 +221,7 @@ export default function Login() {
                     <div className="grid grid-cols-2 gap-3">
                         <button
                             type="button"
-                            className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-[var(--glass-border)] text-[var(--text-secondary)] hover:bg-[var(--glass-bg)] hover:border-[var(--glass-border-hover)] transition-all duration-200 text-sm"
+                            className="flex items-center justify-center gap-2 px-3 py-2.5 sm:px-4 rounded-xl border border-[var(--glass-border)] text-[var(--text-secondary)] hover:bg-[var(--glass-bg)] hover:border-[var(--glass-border-hover)] transition-all duration-200 text-sm"
                             onClick={() => toast.success('Google login coming soon!')}
                         >
                             <svg className="w-4.5 h-4.5" viewBox="0 0 24 24">
@@ -230,7 +234,7 @@ export default function Login() {
                         </button>
                         <button
                             type="button"
-                            className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-[var(--glass-border)] text-[var(--text-secondary)] hover:bg-[var(--glass-bg)] hover:border-[var(--glass-border-hover)] transition-all duration-200 text-sm"
+                            className="flex items-center justify-center gap-2 px-3 py-2.5 sm:px-4 rounded-xl border border-[var(--glass-border)] text-[var(--text-secondary)] hover:bg-[var(--glass-bg)] hover:border-[var(--glass-border-hover)] transition-all duration-200 text-sm"
                             onClick={() => toast('GitHub login coming soon!')}
                         >
                             <svg className="w-4.5 h-4.5" fill="currentColor" viewBox="0 0 24 24">
@@ -253,19 +257,19 @@ export default function Login() {
                 </form>
 
                 {/* Demo credentials */}
-                <div className="mt-5 glass-card p-4 animate-fade-in-up opacity-0" style={{ animationDelay: '400ms', animationFillMode: 'forwards' }}>
+                <div className="mt-4 sm:mt-5 glass-card p-4 animate-fade-in-up opacity-0" style={{ animationDelay: '400ms', animationFillMode: 'forwards' }}>
                     <p className="text-sm text-[var(--accent-start)] font-medium mb-2 flex items-center gap-2">
-                        <Sparkles className="w-4 h-4" />
+                        <Sparkles className="w-4 h-4 flex-shrink-0" />
                         Demo Credentials
                     </p>
                     <div className="space-y-1.5 text-sm">
-                        <p className="flex items-center justify-between text-[var(--text-secondary)]">
+                        <p className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1 text-[var(--text-secondary)]">
                             <span>Email:</span>
-                            <code className="px-2 py-0.5 rounded bg-[var(--bg-tertiary)] text-[var(--text-primary)] text-xs font-mono">demo@example.com</code>
+                            <code className="px-2 py-0.5 rounded bg-[var(--bg-tertiary)] text-[var(--text-primary)] text-xs font-mono break-all">demo@example.com</code>
                         </p>
-                        <p className="flex items-center justify-between text-[var(--text-secondary)]">
+                        <p className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1 text-[var(--text-secondary)]">
                             <span>Password:</span>
-                            <code className="px-2 py-0.5 rounded bg-[var(--bg-tertiary)] text-[var(--text-primary)] text-xs font-mono">demo123</code>
+                            <code className="px-2 py-0.5 rounded bg-[var(--bg-tertiary)] text-[var(--text-primary)] text-xs font-mono break-all">demo123</code>
                         </p>
                     </div>
                 </div>

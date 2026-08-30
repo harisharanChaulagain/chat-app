@@ -25,22 +25,29 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
                 <img
                     src={avatarUrl}
                     alt="avatar"
-                    className="w-8 h-8 rounded-full mr-2"
+                    className="mr-2 h-8 w-8 flex-shrink-0 rounded-full"
                 />
             )}
 
+            {/* Percentage cap instead of a fixed `max-w-xs`: on a 360px phone a
+                320px bubble plus the avatar overflowed the row. */}
             <div
                 className={clsx(
-                    "max-w-xs px-4 py-2 text-sm",
+                    "max-w-[75%] px-3.5 py-2 text-sm break-words sm:max-w-md sm:px-4 md:max-w-lg",
                     isSender
                         ? "bg-blue-500 text-white rounded-l-2xl rounded-tr-3xl"
                         : "bg-gray-200 text-black rounded-r-2xl rounded-tl-3xl"
                 )}
             >
-                {<p>{message}</p>}
+                <p className="whitespace-pre-wrap">{message}</p>
 
                 {timestamp && (
-                    <span className="text-[10px] block text-right text-gray-400 mt-1">
+                    <span
+                        className={clsx(
+                            "mt-1 block text-right text-[10px]",
+                            isSender ? "text-blue-100" : "text-gray-500"
+                        )}
+                    >
                         {timestamp}
                     </span>
                 )}
@@ -50,7 +57,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
                 <img
                     src={avatarUrl}
                     alt="avatar"
-                    className="w-8 h-8 rounded-full ml-2"
+                    className="ml-2 h-8 w-8 flex-shrink-0 rounded-full"
                 />
             )}
         </div>

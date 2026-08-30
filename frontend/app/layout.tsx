@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
@@ -19,6 +19,15 @@ export const metadata: Metadata = {
   description:
     "A modern real-time chat and video calling platform. Connect with friends instantly through text, voice, and video with end-to-end privacy.",
   keywords: "chat, messaging, video call, real-time, communication",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  // Pinch-zoom stays available — capping it would fail WCAG 1.4.4.
+  maximumScale: 5,
+  viewportFit: "cover",
+  themeColor: "#0a0a0f",
 };
 
 export default function RootLayout({
