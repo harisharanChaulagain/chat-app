@@ -256,23 +256,6 @@ export default function Login() {
                     </div>
                 </form>
 
-                {/* Demo credentials */}
-                <div className="mt-4 sm:mt-5 glass-card p-4 animate-fade-in-up opacity-0" style={{ animationDelay: '400ms', animationFillMode: 'forwards' }}>
-                    <p className="text-sm text-[var(--accent-start)] font-medium mb-2 flex items-center gap-2">
-                        <Sparkles className="w-4 h-4 flex-shrink-0" />
-                        Demo Credentials
-                    </p>
-                    <div className="space-y-1.5 text-sm">
-                        <p className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1 text-[var(--text-secondary)]">
-                            <span>Email:</span>
-                            <code className="px-2 py-0.5 rounded bg-[var(--bg-tertiary)] text-[var(--text-primary)] text-xs font-mono break-all">demo@example.com</code>
-                        </p>
-                        <p className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1 text-[var(--text-secondary)]">
-                            <span>Password:</span>
-                            <code className="px-2 py-0.5 rounded bg-[var(--bg-tertiary)] text-[var(--text-primary)] text-xs font-mono break-all">demo123</code>
-                        </p>
-                    </div>
-                </div>
             </div>
         </div>
     );

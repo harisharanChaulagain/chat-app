@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { CallLogInfo } from "@/types/call";
 
 type Conversation = {
   _id: string;
@@ -15,6 +16,9 @@ export type Message = {
   };
   receiverId: string;
   message: string;
+  messageType?: "text" | "image" | "video" | "audio" | "file" | "call";
+  /** Present only on `messageType: "call"` entries. */
+  callInfo?: CallLogInfo;
   createdAt: string;
   updatedAt: string;
 };
@@ -46,7 +50,13 @@ const useConversationStore = create<ConversationState>((set) => ({
     set({ messages: Array.isArray(messages) ? messages : [] }),
 
   addMessage: (message) =>
-    set((state) => ({ messages: [...state.messages, message] })),
+    set((state) =>
+      // A call log reaches both participants over the socket, and a refetch can
+      // race with it — keyed by _id so the same entry never lands twice.
+      state.messages.some((existing) => existing._id === message._id)
+        ? state
+        : { messages: [...state.messages, message] }
+    ),
 
   addMessages: (newMessages) =>
     set((state) => ({

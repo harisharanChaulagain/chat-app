@@ -11,16 +11,7 @@ import {
 } from "lucide-react";
 import { useCall } from "@/context/CallContext";
 import { CALL_END_MESSAGES } from "@/types/call";
-
-const formatDuration = (totalSeconds: number) => {
-    const hours = Math.floor(totalSeconds / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-    const seconds = totalSeconds % 60;
-    const pad = (value: number) => String(value).padStart(2, "0");
-    return hours > 0
-        ? `${hours}:${pad(minutes)}:${pad(seconds)}`
-        : `${pad(minutes)}:${pad(seconds)}`;
-};
+import { formatCallDuration } from "@/lib/callFormat";
 
 const getInitials = (name: string) => name.trim().charAt(0).toUpperCase() || "?";
 
@@ -76,7 +67,7 @@ const CallModal = () => {
             case "connecting":
                 return "Connecting…";
             case "connected":
-                return formatDuration(duration);
+                return formatCallDuration(duration);
             case "ended":
                 return endReason ? CALL_END_MESSAGES[endReason] : "Call ended";
             default:

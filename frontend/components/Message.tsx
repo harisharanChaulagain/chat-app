@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import ChatMessage from "./ui/ChatMessage";
+import CallLogMessage from "./ui/CallLogMessage";
 import { useGetMessage } from "@/hooks/useGetMessage";
 import useConversationStore from "@/store/useConversationStore";
 import useGetSocketMessage from "@/context/useGetSocketMessage";
@@ -74,18 +75,34 @@ export default function Message() {
       className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 py-2 text-white sm:px-4"
       onScroll={handleScroll}
     >
-      {messages.map((msg, index) => (
-        <ChatMessage
-          key={`${msg._id}-${index}`}
-          message={msg.message}
-          isSender={msg.senderId._id === user?._id}
-          avatarUrl="https://i.pravatar.cc/150?img=8"
-          timestamp={new Date(msg.createdAt).toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          })}
-        />
-      ))}
+      {messages.map((msg, index) => {
+        const isSender = msg.senderId?._id === user?._id;
+        const timestamp = new Date(msg.createdAt).toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+
+        if (msg.messageType === "call" && msg.callInfo) {
+          return (
+            <CallLogMessage
+              key={`${msg._id}-${index}`}
+              callInfo={msg.callInfo}
+              isSender={isSender}
+              timestamp={timestamp}
+            />
+          );
+        }
+
+        return (
+          <ChatMessage
+            key={`${msg._id}-${index}`}
+            message={msg.message}
+            isSender={isSender}
+            avatarUrl="https://i.pravatar.cc/150?img=8"
+            timestamp={timestamp}
+          />
+        );
+      })}
 
       {typingUser === selectedConversation?._id &&
         <div

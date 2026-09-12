@@ -63,3 +63,24 @@ export interface TypingPayload {
   conversationId: string;
   isTyping: boolean;
 }
+
+/**
+ * Viewer-neutral result of a call, stored once on the log message. The wording
+ * each participant sees is derived client-side from whether they placed the
+ * call — "cancelled" reads as "Missed call" to the person who was rung.
+ */
+export type CallOutcome =
+  | "completed"
+  | "missed"
+  | "declined"
+  | "cancelled"
+  | "failed";
+
+export interface CallLogInfo {
+  callType: CallType;
+  outcome: CallOutcome;
+  /** Seconds of connected media; 0 for every outcome except "completed". */
+  duration: number;
+  endReason?: CallEndReason;
+}
+

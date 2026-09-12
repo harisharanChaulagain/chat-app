@@ -5,6 +5,10 @@ import Message from "../models/message.model";
 import Follow from "../models/follow.model";
 import Group from "../models/group.model";
 import { getReceiverSocketId, io } from "../socketio/server";
+import {
+  appendMessage,
+  findOrCreateDirectConversation,
+} from "../services/conversation.service";
 
 type MessageType = "text" | "image" | "video" | "audio" | "file";
 
@@ -58,24 +62,14 @@ export const sendMessage = async (req: Request<{ id: string; isGroup?: string },
     let conversation;
     if (isGroupMessage) {
       conversation = await Conversation.findOne({ groupId: group?._id, type: "group" });
+      if (!conversation) {
+        res.status(404).json({ message: "Group conversation not found" });
+        return;
+      }
     } else {
-      conversation = await Conversation.findOne({ participants: { $all: [senderId, receiverId] }, type: "direct" });
+      conversation = await findOrCreateDirectConversation(senderId, receiverId);
     }
-    
-    if (!conversation && isGroupMessage) {
-      res.status(404).json({ message: "Group conversation not found" });
-      return;
-    }
-    
-    if (!conversation) {
-      conversation = await Conversation.create({
-        participants: [senderId, receiverId],
-        messages: [],
-        type: "direct",
-        lastMessageAt: new Date(),
-      });
-    }
-    
+
     const newMessage = new Message({
       senderId,
       receiverId: isGroupMessage ? null : receiverId,
@@ -87,10 +81,8 @@ export const sendMessage = async (req: Request<{ id: string; isGroup?: string },
       isRead: false,
       readBy: [],
     });
-    
-    conversation.messages.push(newMessage._id);
-    conversation.lastMessage = newMessage._id;
-    conversation.lastMessageAt = new Date();
+
+    appendMessage(conversation, newMessage._id);
 
     await Promise.all([conversation.save(), newMessage.save()]);
     await newMessage.populate("senderId", "name email");

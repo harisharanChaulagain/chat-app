@@ -74,3 +74,24 @@ export const CALL_END_MESSAGES: Record<CallEndReason, string> = {
   failed: "Could not connect",
   "media-denied": "Camera or microphone unavailable",
 };
+
+/**
+ * Viewer-neutral result of a call, stored once on the log message. Each
+ * participant reads the same row, so the wording is derived per viewer —
+ * "cancelled" reads as "Missed call" to the person who was rung.
+ */
+export type CallOutcome =
+  | "completed"
+  | "missed"
+  | "declined"
+  | "cancelled"
+  | "failed";
+
+export type CallLogInfo = {
+  callType: CallType;
+  outcome: CallOutcome;
+  /** Seconds of connected media; 0 for every outcome except "completed". */
+  duration: number;
+  endReason?: CallEndReason;
+};
+

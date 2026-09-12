@@ -1,11 +1,16 @@
 import mongoose, { Document, Schema, Types } from "mongoose";
+import { CallLogInfo } from "../types/socket.types";
+
+/** Metadata for a `messageType: "call"` entry — the thread's record of a call. */
+export type ICallInfo = CallLogInfo;
 
 export interface IMessage extends Document {
   senderId: Types.ObjectId;
-  receiverId: Types.ObjectId; 
-  groupId: Types.ObjectId; 
+  receiverId: Types.ObjectId;
+  groupId: Types.ObjectId;
   message: string;
-  messageType: "text" | "image" | "video" | "file";
+  messageType: "text" | "image" | "video" | "audio" | "file" | "call";
+  callInfo?: ICallInfo;
   attachments: Array<{
     type: string;
     url: string;
@@ -18,6 +23,30 @@ export interface IMessage extends Document {
   replyTo: Types.ObjectId;
   isDeleted: boolean;
 }
+
+/** `_id: false` — this never needs addressing on its own, it is part of the message. */
+const callInfoSchema = new Schema<ICallInfo>(
+  {
+    callType: {
+      type: String,
+      enum: ["audio", "video"],
+      required: true,
+    },
+    outcome: {
+      type: String,
+      enum: ["completed", "missed", "declined", "cancelled", "failed"],
+      required: true,
+    },
+    duration: {
+      type: Number,
+      default: 0,
+    },
+    endReason: {
+      type: String,
+    },
+  },
+  { _id: false }
+);
 
 const messageSchema = new Schema(
   {
@@ -42,8 +71,14 @@ const messageSchema = new Schema(
     },
     messageType: {
       type: String,
-      enum: ["text", "image", "video", "file"],
+      enum: ["text", "image", "video", "audio", "file", "call"],
       default: "text",
+    },
+    // `default: undefined` keeps this absent on non-call messages — a plain
+    // nested path would materialise as an empty object on every text message.
+    callInfo: {
+      type: callInfoSchema,
+      default: undefined,
     },
     attachments: [
       {
