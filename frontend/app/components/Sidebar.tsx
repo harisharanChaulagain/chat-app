@@ -2,6 +2,7 @@
 
 import { useLogout } from "@/hooks/useLogout";
 import { useUserStore } from "@/store/userStore";
+import ThemeToggle from "@/components/ui/ThemeToggle";
 import { MessageCircle, Users, LogOut } from "lucide-react";
 import { useRouter, usePathname } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
@@ -55,26 +56,35 @@ export default function Sidebar({ mobileHidden = false }: SidebarProps) {
 
   const profileCard = (
     <>
-      <div className="flex items-center gap-3 mb-3">
-        <div className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold text-white bg-gradient-to-br from-violet-600 to-cyan-600 flex-shrink-0">
+      <div className="mb-3 flex items-center gap-3">
+        <div
+          className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full text-sm font-bold text-white"
+          style={{ background: "var(--gradient-brand)" }}
+        >
           {getInitials(user?.name)}
         </div>
         <div className="min-w-0">
-          <p className="text-sm font-semibold text-[var(--text-primary)] truncate">
+          <p className="truncate text-sm font-semibold text-[var(--text)]">
             {user?.name}
           </p>
-          <p className="text-xs text-[var(--text-muted)] truncate">
-            {user?.email}
-          </p>
+          <p className="truncate text-xs text-[var(--muted)]">{user?.email}</p>
         </div>
       </div>
-      <div className="border-t border-[var(--glass-border)] pt-2">
+
+      <div className="border-t border-[var(--border)] pt-3">
+        <p className="mb-1.5 px-0.5 text-[11px] font-semibold uppercase tracking-wide text-[var(--muted-2)]">
+          Appearance
+        </p>
+        <ThemeToggle variant="segmented" className="w-full" />
+      </div>
+
+      <div className="mt-3 border-t border-[var(--border)] pt-2">
         <button
-          className="w-full flex items-center gap-2 px-2 py-2 rounded-lg text-sm text-red-400 hover:text-red-300 hover:bg-[rgba(239,68,68,0.1)] transition-all duration-200"
+          className="flex w-full items-center gap-2 rounded-[var(--radius-sm)] px-2 py-2 text-sm font-medium text-[var(--danger-text)] transition-colors duration-200 hover:bg-[var(--danger-soft)] disabled:opacity-60"
           onClick={() => logout()}
           disabled={isPending}
         >
-          <LogOut className="w-4 h-4" />
+          <LogOut className="h-4 w-4" />
           {isPending ? "Logging out..." : "Logout"}
         </button>
       </div>
@@ -84,37 +94,52 @@ export default function Sidebar({ mobileHidden = false }: SidebarProps) {
   return (
     <>
       {/* ── Desktop / tablet: vertical rail ── */}
-      <aside className="hidden md:flex h-screen-dvh w-[72px] flex-col justify-between items-center py-5 bg-[var(--bg-secondary)] border-r border-[var(--glass-border)] flex-shrink-0">
+      <aside className="hidden h-screen-dvh w-[76px] flex-shrink-0 flex-col items-center justify-between border-r border-[var(--border)] bg-[var(--surface)] py-5 md:flex">
         {/* Logo */}
         <div className="mb-6">
-          <div
-            className="w-10 h-10 rounded-xl flex items-center justify-center bg-gradient-to-br from-[var(--accent-start)] to-[var(--accent-end)] shadow-[var(--shadow-glow)] cursor-pointer hover:scale-105 transition-transform duration-200"
+          <button
+            type="button"
+            aria-label="Home"
+            className="flex h-10 w-10 items-center justify-center rounded-[var(--radius-md)] text-white transition-transform duration-200 hover:scale-105 active:scale-95"
+            style={{
+              background: "var(--gradient-brand)",
+              boxShadow: "var(--shadow-brand)",
+            }}
             onClick={() => router.push("/")}
           >
-            <MessageCircle className="w-5 h-5 text-white" />
-          </div>
+            <MessageCircle className="h-5 w-5" />
+          </button>
         </div>
 
         {/* Nav items */}
-        <div className="flex flex-col gap-2 items-center flex-1">
+        <div className="flex flex-1 flex-col items-center gap-2">
           {NAV_ITEMS.map((item) => (
-            <div key={item.path} className="relative group">
+            <div key={item.path} className="group relative">
               <button
                 onClick={() => router.push(item.path)}
                 aria-label={item.label}
                 aria-current={isActive(item.path) ? "page" : undefined}
-                className={`w-11 h-11 rounded-xl flex items-center justify-center transition-all duration-200 ${
+                className={`flex h-11 w-11 items-center justify-center rounded-[var(--radius-md)] transition-all duration-200 ${
                   isActive(item.path)
-                    ? "bg-gradient-to-br from-[var(--accent-start)] to-[var(--accent-mid)] text-white shadow-[var(--shadow-glow)]"
-                    : "text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--glass-bg-strong)]"
+                    ? "bg-[var(--primary-soft-strong)] text-[var(--primary)]"
+                    : "text-[var(--muted)] hover:bg-[var(--surface-2)] hover:text-[var(--text)]"
                 }`}
               >
-                <item.icon className="w-5 h-5" />
+                <item.icon className="h-5 w-5" />
               </button>
+
+              {/* Active marker — a short bar on the rail edge */}
+              {isActive(item.path) && (
+                <span
+                  aria-hidden="true"
+                  className="absolute -left-5 top-1/2 h-5 w-1 -translate-y-1/2 rounded-r-full bg-[var(--primary)]"
+                />
+              )}
+
               {/* Tooltip — pointer devices only, it has no touch equivalent */}
-              <div className="absolute left-full ml-3 top-1/2 -translate-y-1/2 px-3 py-1.5 rounded-lg bg-[var(--bg-elevated)] text-[var(--text-primary)] text-xs font-medium whitespace-nowrap opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 shadow-[var(--shadow-md)] border border-[var(--glass-border)] z-50 pointer-events-none">
+              <div className="pointer-events-none invisible absolute left-full top-1/2 z-50 ml-3 -translate-y-1/2 whitespace-nowrap rounded-[var(--radius-sm)] border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1.5 text-xs font-medium text-[var(--text)] opacity-0 shadow-[var(--shadow-md)] transition-all duration-200 group-hover:visible group-hover:opacity-100">
                 {item.label}
-                <div className="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-t-[5px] border-t-transparent border-b-[5px] border-b-transparent border-r-[5px] border-r-[var(--bg-elevated)]" />
+                <div className="absolute right-full top-1/2 h-0 w-0 -translate-y-1/2 border-b-[5px] border-r-[5px] border-t-[5px] border-b-transparent border-r-[var(--border)] border-t-transparent" />
               </div>
             </div>
           ))}
@@ -126,7 +151,10 @@ export default function Sidebar({ mobileHidden = false }: SidebarProps) {
             onClick={() => setOpenProfile(!openProfile)}
             aria-label="Account menu"
             aria-expanded={openProfile}
-            className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-white bg-gradient-to-br from-violet-600 to-cyan-600 ring-2 ring-transparent hover:ring-[var(--accent-start)] transition-all duration-200 relative"
+            className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold text-white ring-2 ring-offset-2 ring-offset-[var(--surface)] transition-all duration-200 hover:scale-105 ${
+              openProfile ? "ring-[var(--primary)]" : "ring-transparent"
+            }`}
+            style={{ background: "var(--gradient-brand)" }}
           >
             {getInitials(user?.name)}
           </button>
@@ -134,7 +162,7 @@ export default function Sidebar({ mobileHidden = false }: SidebarProps) {
           {/* Profile popup */}
           {openProfile && (
             <div
-              className="absolute bottom-14 left-0 w-56 glass-card p-4 rounded-xl shadow-[var(--shadow-lg)] z-50 animate-fade-in-up"
+              className="absolute bottom-14 left-0 z-50 w-60 rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--surface)] p-4 shadow-[var(--shadow-lg)] animate-fade-in-up"
               style={{ animationDuration: "200ms" }}
             >
               {profileCard}
@@ -145,7 +173,7 @@ export default function Sidebar({ mobileHidden = false }: SidebarProps) {
 
       {/* ── Mobile: bottom tab bar ── */}
       <nav
-        className={`md:hidden fixed bottom-0 left-0 right-0 z-40 border-t border-[var(--glass-border)] bg-[var(--bg-secondary)]/95 backdrop-blur-xl pb-safe ${
+        className={`fixed bottom-0 left-0 right-0 z-40 border-t border-[var(--border)] bg-[var(--overlay-surface)] backdrop-blur-xl pb-safe md:hidden ${
           mobileHidden ? "hidden" : "block"
         }`}
       >
@@ -156,17 +184,15 @@ export default function Sidebar({ mobileHidden = false }: SidebarProps) {
               onClick={() => router.push(item.path)}
               aria-label={item.label}
               aria-current={isActive(item.path) ? "page" : undefined}
-              className={`flex flex-1 flex-col items-center justify-center gap-1 py-2.5 text-[11px] font-medium transition-colors duration-200 ${
+              className={`flex flex-1 flex-col items-center justify-center gap-1 py-2 text-[11px] font-medium transition-colors duration-200 ${
                 isActive(item.path)
-                  ? "text-[var(--text-primary)]"
-                  : "text-[var(--text-muted)]"
+                  ? "text-[var(--primary)]"
+                  : "text-[var(--muted)]"
               }`}
             >
               <span
-                className={`flex h-9 w-12 items-center justify-center rounded-xl transition-all duration-200 ${
-                  isActive(item.path)
-                    ? "bg-gradient-to-br from-[var(--accent-start)] to-[var(--accent-mid)] text-white shadow-[var(--shadow-glow)]"
-                    : ""
+                className={`flex h-8 w-14 items-center justify-center rounded-full transition-all duration-200 ${
+                  isActive(item.path) ? "bg-[var(--primary-soft-strong)]" : ""
                 }`}
               >
                 <item.icon className="h-5 w-5" />
@@ -181,15 +207,16 @@ export default function Sidebar({ mobileHidden = false }: SidebarProps) {
               onClick={() => setOpenProfile(!openProfile)}
               aria-label="Account menu"
               aria-expanded={openProfile}
-              className="flex flex-1 flex-col items-center justify-center gap-1 py-2.5 text-[11px] font-medium text-[var(--text-muted)]"
+              className={`flex flex-1 flex-col items-center justify-center gap-1 py-2 text-[11px] font-medium transition-colors duration-200 ${
+                openProfile ? "text-[var(--primary)]" : "text-[var(--muted)]"
+              }`}
             >
-              <span className="flex h-9 w-12 items-center justify-center">
+              <span className="flex h-8 w-14 items-center justify-center">
                 <span
-                  className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold text-white bg-gradient-to-br from-violet-600 to-cyan-600 ring-2 transition-all duration-200 ${
-                    openProfile
-                      ? "ring-[var(--accent-start)]"
-                      : "ring-transparent"
+                  className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold text-white ring-2 transition-all duration-200 ${
+                    openProfile ? "ring-[var(--primary)]" : "ring-transparent"
                   }`}
+                  style={{ background: "var(--gradient-brand)" }}
                 >
                   {getInitials(user?.name)}
                 </span>
@@ -199,11 +226,8 @@ export default function Sidebar({ mobileHidden = false }: SidebarProps) {
 
             {openProfile && (
               <div
-                className="absolute bottom-full right-0 mb-2 w-[min(15rem,calc(100vw-2rem))] glass-card p-4 rounded-xl shadow-[var(--shadow-lg)] z-50 animate-fade-in-up"
-                style={{
-                  animationDuration: "200ms",
-                  background: "var(--bg-elevated)",
-                }}
+                className="absolute bottom-full right-0 z-50 mb-2 w-[min(16rem,calc(100vw-2rem))] rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--surface)] p-4 shadow-[var(--shadow-lg)] animate-fade-in-up"
+                style={{ animationDuration: "200ms" }}
               >
                 {profileCard}
               </div>

@@ -1,78 +1,241 @@
 @import "tailwindcss";
 
-/* ==============================
+/* ==================================================================
    DESIGN SYSTEM — ChatVerse
-   ============================== */
+   Light-first, dark-capable. One source of truth for colour, radius,
+   elevation and motion; components reference tokens, never raw hex.
+   ================================================================== */
 
 :root {
-  /* Core palette */
-  --bg-primary: #0a0a0f;
-  --bg-secondary: #101018;
-  --bg-tertiary: #16161f;
-  --bg-elevated: #1c1c28;
-  --bg-surface: #22222f;
+  color-scheme: light;
 
-  /* Text */
-  --text-primary: #f0f0f5;
-  --text-secondary: #a0a0b8;
-  --text-muted: #6b6b80;
-  --text-inverse: #0a0a0f;
+  /* ── Brand ── */
+  --primary: #635BFF;
+  --primary-hover: #524BE0;
+  --primary-active: #453FC7;
+  --secondary: #8B5CF6;
 
-  /* Accent gradients */
-  --accent-start: #8b5cf6;
-  /* violet-500 */
-  --accent-mid: #6366f1;
-  /* indigo-500 */
-  --accent-end: #06b6d4;
-  /* cyan-500 */
-  --gradient-accent: linear-gradient(135deg, var(--accent-start), var(--accent-mid), var(--accent-end));
-  --gradient-accent-hover: linear-gradient(135deg, #7c3aed, #4f46e5, #0891b2);
-  --gradient-subtle: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(6, 182, 212, 0.08));
+  /* Tinted primary washes — used for selected rows, soft badges, focus
+     rings. Kept as rgba so they layer over any surface. */
+  --primary-soft: rgba(99, 91, 255, 0.08);
+  --primary-soft-strong: rgba(99, 91, 255, 0.14);
+  --primary-ring: rgba(99, 91, 255, 0.22);
+  --primary-contrast: #ffffff;
 
-  /* Semantic */
-  --color-success: #22c55e;
-  --color-error: #ef4444;
-  --color-warning: #f59e0b;
-  --color-info: #3b82f6;
+  /* ── Neutrals ── */
+  --bg: #F7F8FC;
+  --surface: #FFFFFF;
+  /* One step in from the surface: hover fills, input beds, skeletons. */
+  --surface-2: #F1F2F8;
+  --surface-3: #E9EBF3;
+  --text: #171923;
+  --muted: #6B7280;
+  /* Only for non-essential text (timestamps, hints) — lighter than muted. */
+  --muted-2: #8B93A1;
+  --border: #E8EAF0;
+  --border-strong: #D8DBE6;
 
-  /* Glass */
-  --glass-bg: rgba(255, 255, 255, 0.04);
-  --glass-bg-strong: rgba(255, 255, 255, 0.07);
-  --glass-border: rgba(255, 255, 255, 0.06);
-  --glass-border-hover: rgba(255, 255, 255, 0.12);
-  --glass-blur: 20px;
+  /* ── Semantic ── */
+  --success: #22C55E;
+  --success-soft: rgba(34, 197, 94, 0.12);
+  --danger: #EF4444;
+  --danger-hover: #DC2626;
+  --danger-soft: rgba(239, 68, 68, 0.1);
+  --danger-text: #DC2626;
+  --warning: #F59E0B;
+  --warning-soft: rgba(245, 158, 11, 0.12);
+  --info: #3B82F6;
 
-  /* Shadows */
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
-  --shadow-glow: 0 0 30px rgba(139, 92, 246, 0.15);
-  --shadow-glow-strong: 0 0 60px rgba(139, 92, 246, 0.25);
+  /* ── Gradients ── */
+  --gradient-brand: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  --gradient-brand-hover: linear-gradient(135deg, var(--primary-hover) 0%, #7C4DEF 100%);
+  --gradient-bubble: linear-gradient(135deg, #6A62FF 0%, #8B5CF6 100%);
+  --gradient-wash: linear-gradient(135deg, rgba(99, 91, 255, 0.1) 0%, rgba(139, 92, 246, 0.05) 100%);
 
-  /* Radii */
-  --radius-sm: 8px;
+  /* ── Elevation — deliberately shallow ── */
+  --shadow-xs: 0 1px 2px rgba(23, 25, 35, 0.04);
+  --shadow-sm: 0 1px 3px rgba(23, 25, 35, 0.06), 0 1px 2px rgba(23, 25, 35, 0.04);
+  --shadow-md: 0 4px 12px rgba(23, 25, 35, 0.07);
+  --shadow-lg: 0 12px 32px rgba(23, 25, 35, 0.12);
+  --shadow-brand: 0 6px 18px rgba(99, 91, 255, 0.22);
+
+  /* Backdrop behind modals and sticky bars. */
+  --scrim: rgba(23, 25, 35, 0.45);
+  --overlay-surface: rgba(255, 255, 255, 0.82);
+  --overlay-border: rgba(23, 25, 35, 0.08);
+
+  /* ── Radii ── */
+  --radius-xs: 8px;
+  --radius-sm: 10px;
   --radius-md: 12px;
   --radius-lg: 16px;
-  --radius-xl: 24px;
+  --radius-xl: 20px;
+  --radius-2xl: 24px;
   --radius-full: 9999px;
 
-  /* Transitions */
-  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-slow: 400ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-spring: 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  /* ── Motion ── */
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+  --transition-fast: 140ms var(--ease);
+  --transition-base: 220ms var(--ease);
+  --transition-slow: 380ms var(--ease-out);
+}
+
+/* Dark palette. Applied when the OS asks for it (unless the user has
+   explicitly chosen light) and whenever `data-theme="dark"` is set, so the
+   in-app toggle wins in both directions. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+
+    --primary: #7B74FF;
+    --primary-hover: #8C86FF;
+    --primary-active: #6F68F5;
+    --secondary: #A78BFA;
+
+    --primary-soft: rgba(123, 116, 255, 0.14);
+    --primary-soft-strong: rgba(123, 116, 255, 0.22);
+    --primary-ring: rgba(123, 116, 255, 0.3);
+    --primary-contrast: #0E1016;
+
+    --bg: #0E1016;
+    --surface: #161922;
+    --surface-2: #1E222E;
+    --surface-3: #272C3A;
+    --text: #F4F5F9;
+    --muted: #9BA3B2;
+    --muted-2: #7C8494;
+    --border: #262B37;
+    --border-strong: #333A49;
+
+    --success-soft: rgba(34, 197, 94, 0.16);
+    --danger-soft: rgba(239, 68, 68, 0.16);
+    --danger-text: #F87171;
+    --warning-soft: rgba(245, 158, 11, 0.16);
+
+    --gradient-wash: linear-gradient(135deg, rgba(123, 116, 255, 0.14) 0%, rgba(167, 139, 250, 0.07) 100%);
+
+    --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.36);
+    --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.44);
+    --shadow-lg: 0 14px 36px rgba(0, 0, 0, 0.56);
+    --shadow-brand: 0 6px 20px rgba(99, 91, 255, 0.34);
+
+    --scrim: rgba(6, 7, 11, 0.7);
+    --overlay-surface: rgba(22, 25, 34, 0.84);
+    --overlay-border: rgba(255, 255, 255, 0.08);
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --primary: #7B74FF;
+  --primary-hover: #8C86FF;
+  --primary-active: #6F68F5;
+  --secondary: #A78BFA;
+
+  --primary-soft: rgba(123, 116, 255, 0.14);
+  --primary-soft-strong: rgba(123, 116, 255, 0.22);
+  --primary-ring: rgba(123, 116, 255, 0.3);
+  --primary-contrast: #0E1016;
+
+  --bg: #0E1016;
+  --surface: #161922;
+  --surface-2: #1E222E;
+  --surface-3: #272C3A;
+  --text: #F4F5F9;
+  --muted: #9BA3B2;
+  --muted-2: #7C8494;
+  --border: #262B37;
+  --border-strong: #333A49;
+
+  --success-soft: rgba(34, 197, 94, 0.16);
+  --danger-soft: rgba(239, 68, 68, 0.16);
+  --danger-text: #F87171;
+  --warning-soft: rgba(245, 158, 11, 0.16);
+
+  --gradient-wash: linear-gradient(135deg, rgba(123, 116, 255, 0.14) 0%, rgba(167, 139, 250, 0.07) 100%);
+
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.36);
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.44);
+  --shadow-lg: 0 14px 36px rgba(0, 0, 0, 0.56);
+  --shadow-brand: 0 6px 20px rgba(99, 91, 255, 0.34);
+
+  --scrim: rgba(6, 7, 11, 0.7);
+  --overlay-surface: rgba(22, 25, 34, 0.84);
+  --overlay-border: rgba(255, 255, 255, 0.08);
+}
+
+/* ==================================================================
+   LEGACY TOKEN ALIASES
+   The previous dark-only palette used these names. They now resolve to
+   the tokens above so any styling not touched by this pass still tracks
+   the active theme instead of pinning itself to the old dark values.
+   ================================================================== */
+
+:root {
+  --bg-primary: var(--bg);
+  --bg-secondary: var(--surface);
+  --bg-tertiary: var(--surface-2);
+  --bg-elevated: var(--surface);
+  --bg-surface: var(--surface-2);
+
+  --text-primary: var(--text);
+  --text-secondary: var(--muted);
+  --text-muted: var(--muted-2);
+  --text-inverse: var(--primary-contrast);
+
+  --accent-start: var(--primary);
+  --accent-mid: var(--primary);
+  --accent-end: var(--secondary);
+  --gradient-accent: var(--gradient-brand);
+  --gradient-accent-hover: var(--gradient-brand-hover);
+  --gradient-subtle: var(--gradient-wash);
+
+  --color-success: var(--success);
+  --color-error: var(--danger);
+  --color-warning: var(--warning);
+  --color-info: var(--info);
+
+  --glass-bg: var(--surface);
+  --glass-bg-strong: var(--surface-2);
+  --glass-border: var(--border);
+  --glass-border-hover: var(--border-strong);
+  --glass-blur: 18px;
+
+  --shadow-glow: var(--shadow-brand);
+  --shadow-glow-strong: var(--shadow-brand);
 }
 
 @theme inline {
-  --color-background: var(--bg-primary);
-  --color-foreground: var(--text-primary);
-  --font-sans: 'Inter', system-ui, sans-serif;
-  --font-mono: var(--font-geist-mono);
+  --color-background: var(--bg);
+  --color-foreground: var(--text);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-line: var(--border);
+  --color-line-strong: var(--border-strong);
+  --color-ink: var(--text);
+  --color-muted: var(--muted);
+  --color-muted-2: var(--muted-2);
+  --color-brand: var(--primary);
+  --color-brand-2: var(--secondary);
+  --color-success: var(--success);
+  --color-danger: var(--danger);
+  --color-warning: var(--warning);
+
+  --radius-card: var(--radius-lg);
+  --radius-field: var(--radius-md);
+
+  --font-sans: var(--font-inter), 'Inter', system-ui, -apple-system, sans-serif;
 }
 
-/* ==============================
-   BASE STYLES
-   ============================== */
+/* ==================================================================
+   BASE
+   ================================================================== */
 
 * {
   box-sizing: border-box;
@@ -87,12 +250,16 @@ html {
 body {
   margin: 0;
   padding: 0;
-  background: var(--bg-primary);
-  color: var(--text-primary);
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-inter), 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+  /* Theme switches should read as a settle, not a hard cut. */
+  transition: background-color var(--transition-base), color var(--transition-base);
 }
 
 /* Media never breaks a layout out of its container on narrow screens. */
@@ -102,9 +269,21 @@ svg {
   max-width: 100%;
 }
 
-/* ==============================
+::selection {
+  background: var(--primary-soft-strong);
+  color: var(--text);
+}
+
+/* One consistent keyboard focus treatment for every interactive element. */
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: var(--radius-xs);
+}
+
+/* ==================================================================
    RESPONSIVE HELPERS
-   ============================== */
+   ================================================================== */
 
 /* `100vh` on mobile Safari/Chrome includes the retracting URL bar, so a
    full-height app shell ends up taller than the visible viewport. `dvh`
@@ -135,7 +314,7 @@ svg {
 /* Height of the mobile bottom nav plus the safe area beneath it — used as
    scroll padding so the last row of content is never trapped under the bar. */
 .pb-mobile-nav {
-  padding-bottom: calc(4.5rem + env(safe-area-inset-bottom, 0px));
+  padding-bottom: calc(4.75rem + env(safe-area-inset-bottom, 0px));
 }
 
 @media (min-width: 768px) {
@@ -154,12 +333,18 @@ svg {
   display: none;
 }
 
-/* ==============================
-   CUSTOM SCROLLBAR
-   ============================== */
+/* ==================================================================
+   SCROLLBAR
+   ================================================================== */
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
 
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
@@ -167,92 +352,318 @@ svg {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(139, 92, 246, 0.3);
+  background: var(--border-strong);
   border-radius: var(--radius-full);
+  /* Inset the thumb so it reads as a hairline rather than a full gutter. */
+  border: 2px solid transparent;
+  background-clip: content-box;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(139, 92, 246, 0.5);
+  background: var(--muted-2);
+  background-clip: content-box;
 }
 
-/* ==============================
-   GLASSMORPHISM UTILITIES
-   ============================== */
+/* ==================================================================
+   SURFACES + BUTTONS
+   Everything here lives in `@layer components` so Tailwind's own utilities
+   still win: unlayered CSS beats *every* layered utility regardless of
+   specificity, which would quietly break `btn-primary rounded-full`,
+   `skeleton rounded-full`, and any `bg-*` override on a card.
+   ================================================================== */
 
-.glass {
-  background: var(--glass-bg);
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
-  border: 1px solid var(--glass-border);
+@layer components {
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xs);
+  }
+
+  .card-interactive {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xs);
+    transition: border-color var(--transition-base), box-shadow var(--transition-base),
+      transform var(--transition-base);
+  }
+
+  .card-interactive:hover {
+    border-color: var(--border-strong);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+  }
+
+  /* Translucent bar for headers and floating control clusters. */
+  .panel-blur {
+    background: var(--overlay-surface);
+    backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+    border: 1px solid var(--overlay-border);
+  }
+
+  /* Kept for anything still asking for the old glass classes. */
+  .glass,
+  .glass-strong {
+    background: var(--overlay-surface);
+    backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+    border: 1px solid var(--overlay-border);
+  }
+
+  .glass-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xs);
+    transition: border-color var(--transition-base), box-shadow var(--transition-base);
+  }
+
+  .glass-card:hover {
+    border-color: var(--border-strong);
+    box-shadow: var(--shadow-md);
+  }
+
+  /* ================================================================
+     BUTTONS
+     ================================================================ */
+
+  .btn-primary {
+    background: var(--gradient-brand);
+    color: #ffffff;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 600;
+    border-radius: var(--radius-md);
+    transition: filter var(--transition-fast), box-shadow var(--transition-base),
+      transform var(--transition-fast);
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    filter: brightness(1.06);
+    box-shadow: var(--shadow-brand);
+    transform: translateY(-1px);
+  }
+
+  .btn-primary:active:not(:disabled) {
+    transform: translateY(0);
+    filter: brightness(0.96);
+  }
+
+  .btn-primary:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  .btn-secondary {
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--border);
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 500;
+    border-radius: var(--radius-md);
+    transition: background-color var(--transition-fast), border-color var(--transition-fast),
+      color var(--transition-fast);
+  }
+
+  .btn-secondary:hover:not(:disabled) {
+    background: var(--surface-2);
+    border-color: var(--border-strong);
+  }
+
+  .btn-secondary:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  /* Legacy alias — the old gradient button. */
+  .gradient-btn {
+    background: var(--gradient-brand);
+    color: #ffffff;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    transition: filter var(--transition-fast), box-shadow var(--transition-base),
+      transform var(--transition-fast);
+  }
+
+  .gradient-btn:hover:not(:disabled) {
+    filter: brightness(1.06);
+    box-shadow: var(--shadow-brand);
+    transform: translateY(-1px);
+  }
+
+  .gradient-btn:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  /* Square-ish tappable icon button, 40px on touch and up. */
+  .icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-full);
+    color: var(--muted);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: background-color var(--transition-fast), color var(--transition-fast);
+  }
+
+  .icon-btn:hover:not(:disabled) {
+    background: var(--surface-2);
+    color: var(--text);
+  }
+
+  .icon-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  /* Brand-tinted hover, for the call actions in a thread header. */
+  .icon-btn-brand:hover:not(:disabled) {
+    background: var(--primary-soft);
+    color: var(--primary);
+  }
+
+  /* Destructive hover, for leave/hang-up style actions. */
+  .icon-btn-danger:hover:not(:disabled) {
+    background: var(--danger-soft);
+    color: var(--danger-text);
+  }
+
+  .gradient-text {
+    background: var(--gradient-brand);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
 }
 
-.glass-strong {
-  background: var(--glass-bg-strong);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid var(--glass-border);
+/* ==================================================================
+   FORM FIELDS
+   Inside `@layer components` so Tailwind's own padding utilities still win —
+   the fields that carry a leading icon rely on `pl-11` beating the shorthand
+   `padding` below, which an unlayered rule would have overridden.
+   ================================================================== */
+
+@layer components {
+
+  .field,
+  .input-dark {
+    width: 100%;
+    padding: 12px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    color: var(--text);
+    font-family: inherit;
+    /* iOS Safari zooms the viewport when a focused input is under 16px, so
+       touch widths get the full 16px and only desktop drops to 15px. */
+    font-size: 1rem;
+    line-height: 1.5;
+    outline: none;
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast),
+      background-color var(--transition-fast);
+  }
+
+  @media (min-width: 768px) {
+
+    .field,
+    .input-dark {
+      font-size: 0.9375rem;
+    }
+  }
+
+  .field::placeholder,
+  .input-dark::placeholder {
+    color: var(--muted-2);
+  }
+
+  .field:focus,
+  .input-dark:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-ring);
+  }
+
+  .field.field-error,
+  .field.input-error,
+  .input-dark.input-error {
+    border-color: var(--danger);
+    box-shadow: 0 0 0 3px var(--danger-soft);
+  }
+
+  /* Muted variant that sits inside an already-white panel. */
+  .field-sunken {
+    background: var(--surface-2);
+    border-color: transparent;
+  }
+
+  .field-sunken:focus {
+    background: var(--surface);
+    border-color: var(--primary);
+  }
 }
 
-.glass-card {
-  background: var(--glass-bg);
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
-  border: 1px solid var(--glass-border);
-  border-radius: var(--radius-lg);
-  transition: border-color var(--transition-base), box-shadow var(--transition-base);
+/* ==================================================================
+   LOADING / SKELETONS
+   ================================================================== */
+
+@layer components {
+
+  .skeleton {
+    position: relative;
+    overflow: hidden;
+    background: var(--surface-2);
+    border-radius: var(--radius-xs);
+  }
+
+  .skeleton::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg,
+        transparent 0%,
+        color-mix(in srgb, var(--surface) 70%, transparent) 50%,
+        transparent 100%);
+    transform: translateX(-100%);
+    animation: skeleton-sweep 1.5s var(--ease) infinite;
+  }
+
+  .spinner {
+    border-radius: var(--radius-full);
+    border: 2px solid var(--border);
+    border-top-color: var(--primary);
+    animation: spin 700ms linear infinite;
+  }
+
+  /* On a brand-filled button the neutral track vanishes — go white instead. */
+  .spinner-inverse {
+    border-color: rgba(255, 255, 255, 0.35);
+    border-top-color: #ffffff;
+  }
 }
 
-.glass-card:hover {
-  border-color: var(--glass-border-hover);
-  box-shadow: var(--shadow-glow);
+/* ==================================================================
+   KEYFRAMES
+   ================================================================== */
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
-/* ==============================
-   GRADIENT UTILITIES
-   ============================== */
-
-.gradient-text {
-  background: var(--gradient-accent);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+@keyframes skeleton-sweep {
+  100% {
+    transform: translateX(100%);
+  }
 }
-
-.gradient-btn {
-  background: var(--gradient-accent);
-  color: white;
-  border: none;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  transition: transform var(--transition-fast), box-shadow var(--transition-base);
-}
-
-.gradient-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4);
-}
-
-.gradient-btn:active {
-  transform: translateY(0);
-}
-
-.gradient-btn::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
-  transform: translateX(-100%);
-  transition: transform 0.6s ease;
-}
-
-.gradient-btn:hover::after {
-  transform: translateX(100%);
-}
-
-/* ==============================
-   ANIMATION KEYFRAMES
-   ============================== */
 
 @keyframes fadeIn {
   from {
@@ -267,7 +678,7 @@ svg {
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(14px);
   }
 
   to {
@@ -279,19 +690,19 @@ svg {
 @keyframes slideUp {
   from {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(24px) scale(0.98);
   }
 
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 
 @keyframes slideInLeft {
   from {
     opacity: 0;
-    transform: translateX(-20px);
+    transform: translateX(-16px);
   }
 
   to {
@@ -303,7 +714,7 @@ svg {
 @keyframes slideInRight {
   from {
     opacity: 0;
-    transform: translateX(20px);
+    transform: translateX(16px);
   }
 
   to {
@@ -334,19 +745,37 @@ svg {
   }
 }
 
+/* Expanding halo behind a ringing call avatar. */
+@keyframes call-ring {
+  0% {
+    transform: scale(0.9);
+    opacity: 0.55;
+  }
+
+  70% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
 @keyframes pulse-ring {
   0% {
-    transform: scale(0.95);
+    transform: scale(0.96);
     opacity: 1;
   }
 
   50% {
-    transform: scale(1.05);
-    opacity: 0.7;
+    transform: scale(1.06);
+    opacity: 0.65;
   }
 
   100% {
-    transform: scale(0.95);
+    transform: scale(0.96);
     opacity: 1;
   }
 }
@@ -355,11 +784,11 @@ svg {
 
   0%,
   100% {
-    box-shadow: 0 0 8px rgba(34, 197, 94, 0.4);
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5);
   }
 
   50% {
-    box-shadow: 0 0 16px rgba(34, 197, 94, 0.7);
+    box-shadow: 0 0 0 8px rgba(34, 197, 94, 0);
   }
 }
 
@@ -369,10 +798,12 @@ svg {
   60%,
   100% {
     transform: translateY(0);
+    opacity: 0.5;
   }
 
   30% {
-    transform: translateY(-6px);
+    transform: translateY(-5px);
+    opacity: 1;
   }
 }
 
@@ -390,20 +821,10 @@ svg {
   }
 }
 
-@keyframes spin-slow {
-  0% {
-    transform: rotate(0deg);
-  }
-
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
 @keyframes message-in {
   from {
     opacity: 0;
-    transform: translateY(8px) scale(0.97);
+    transform: translateY(6px) scale(0.98);
   }
 
   to {
@@ -412,29 +833,34 @@ svg {
   }
 }
 
-/* Animation utilities */
+/* ── Animation utilities ── */
+
 .animate-fade-in {
-  animation: fadeIn 0.5s ease-out forwards;
+  animation: fadeIn 0.35s var(--ease-out) forwards;
 }
 
 .animate-fade-in-up {
-  animation: fadeInUp 0.6s ease-out forwards;
+  animation: fadeInUp 0.45s var(--ease-out) forwards;
 }
 
 .animate-slide-up {
-  animation: slideUp 0.6s ease-out forwards;
+  animation: slideUp 0.4s var(--ease-out) forwards;
 }
 
 .animate-slide-left {
-  animation: slideInLeft 0.4s ease-out forwards;
+  animation: slideInLeft 0.35s var(--ease-out) forwards;
 }
 
 .animate-slide-right {
-  animation: slideInRight 0.4s ease-out forwards;
+  animation: slideInRight 0.35s var(--ease-out) forwards;
 }
 
 .animate-float {
   animation: float 3s ease-in-out infinite;
+}
+
+.animate-call-ring {
+  animation: call-ring 1.8s var(--ease-out) infinite;
 }
 
 .animate-pulse-ring {
@@ -446,18 +872,22 @@ svg {
 }
 
 .animate-shimmer {
-  background: linear-gradient(90deg, transparent 25%, rgba(255, 255, 255, 0.08) 50%, transparent 75%);
+  background: linear-gradient(90deg, transparent 25%, var(--surface-3) 50%, transparent 75%);
   background-size: 200% 100%;
-  animation: shimmer 2s infinite;
+  animation: shimmer 1.6s infinite;
 }
 
 .animate-gradient {
   background-size: 200% 200%;
-  animation: gradient-shift 4s ease infinite;
+  animation: gradient-shift 5s ease infinite;
 }
 
 .animate-message-in {
-  animation: message-in 0.3s ease-out forwards;
+  animation: message-in 0.25s var(--ease-out) forwards;
+}
+
+.animate-typing-dot {
+  animation: typing-bounce 1.2s ease-in-out infinite;
 }
 
 /* Stagger delays */
@@ -485,53 +915,18 @@ svg {
   animation-delay: 600ms;
 }
 
-/* ==============================
-   INPUT STYLING
-   ============================== */
+/* ==================================================================
+   CALL SURFACES
+   ================================================================== */
 
-/* Inside `@layer components` so Tailwind's own padding utilities still win —
-   the fields that carry a leading icon rely on `pl-11` beating the shorthand
-   `padding` below, which an unlayered rule would have overridden. */
-@layer components {
-  .input-dark {
-    width: 100%;
-    padding: 12px 16px;
-    background: var(--bg-tertiary);
-    border: 1px solid var(--glass-border);
-    border-radius: var(--radius-md);
-    color: var(--text-primary);
-    font-family: inherit;
-    /* iOS Safari zooms the viewport when a focused input is under 16px, so
-       touch widths get the full 16px and only desktop drops to 15px. */
-    font-size: 1rem;
-    outline: none;
-    transition: border-color var(--transition-base), box-shadow var(--transition-base);
-  }
-
-  @media (min-width: 768px) {
-    .input-dark {
-      font-size: 0.9375rem;
-    }
-  }
-
-  .input-dark::placeholder {
-    color: var(--text-muted);
-  }
-
-  .input-dark:focus {
-    border-color: var(--accent-start);
-    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15);
-  }
-
-  .input-dark.input-error {
-    border-color: var(--color-error);
-    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
-  }
+/* Ambient backdrop for the audio call screen — a calm brand-tinted wash
+   rather than flat black, so an audio call still feels like the app. */
+.call-stage {
+  background:
+    radial-gradient(120% 80% at 50% -10%, var(--primary-soft-strong) 0%, transparent 60%),
+    radial-gradient(90% 70% at 50% 110%, rgba(139, 92, 246, 0.14) 0%, transparent 60%),
+    var(--bg);
 }
-
-/* ==============================
-   VIDEO PLAYER (keep for calls)
-   ============================== */
 
 .video_player {
   width: 100%;
@@ -539,15 +934,13 @@ svg {
   aspect-ratio: 3 / 2;
   height: auto;
   border-radius: var(--radius-md);
-  border: 1px solid var(--glass-border);
+  border: 1px solid var(--border);
 }
 
-/* ==============================
+/* ==================================================================
    MOTION PREFERENCES
-   ============================== */
+   ================================================================== */
 
-/* The landing/friends pages lean on entrance animations and floating blobs;
-   honour a reduced-motion request instead of animating regardless. */
 @media (prefers-reduced-motion: reduce) {
 
   html {

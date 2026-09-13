@@ -34,12 +34,18 @@ export default function GuestGuard({
 }
 
 const AuthSplash = () => (
-  <div className="flex min-h-screen-dvh items-center justify-center bg-[var(--bg-primary)] px-4">
+  <div className="flex min-h-screen-dvh items-center justify-center bg-[var(--bg)] px-4">
     <div className="flex flex-col items-center gap-5">
-      <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-[var(--accent-start)] to-[var(--accent-end)] shadow-[var(--shadow-glow)] animate-pulse-ring">
+      <div
+        className="flex h-14 w-14 items-center justify-center rounded-[var(--radius-xl)] animate-pulse-ring"
+        style={{
+          background: "var(--gradient-brand)",
+          boxShadow: "var(--shadow-brand)",
+        }}
+      >
         <MessageCircle className="h-7 w-7 text-white" />
       </div>
-      <p className="text-sm text-[var(--text-muted)]">Loading ChatVerse…</p>
+      <p className="text-sm text-[var(--muted)]">Loading ChatVerse…</p>
     </div>
   </div>
 );

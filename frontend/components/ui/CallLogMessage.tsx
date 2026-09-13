@@ -52,7 +52,7 @@ const CallLogMessage: React.FC<CallLogMessageProps> = ({
     return (
         <div
             className={clsx(
-                "flex items-end mb-2",
+                "flex items-end animate-message-in",
                 isSender ? "justify-end" : "justify-start"
             )}
         >
@@ -69,42 +69,44 @@ const CallLogMessage: React.FC<CallLogMessageProps> = ({
                 className={clsx(
                     // Matches ChatMessage's responsive cap so call entries sit in
                     // the same column as the bubbles around them.
-                    "flex max-w-[75%] items-center gap-3 border px-3.5 py-2 text-left text-sm transition-colors sm:max-w-md sm:px-4 md:max-w-lg",
-                    "rounded-2xl",
-                    canCallBack
-                        ? "cursor-pointer hover:bg-slate-700/60"
-                        : "cursor-default",
+                    "flex max-w-[76%] items-center gap-3 rounded-[18px] border px-3 py-2 text-left shadow-[var(--shadow-xs)] transition-colors duration-150 sm:max-w-md sm:px-3.5 md:max-w-lg",
+                    canCallBack ? "cursor-pointer" : "cursor-default",
                     missed
-                        ? "border-red-500/40 bg-red-500/10"
-                        : "border-slate-600/60 bg-slate-800/60"
+                        ? clsx(
+                            "border-[var(--danger)]/25 bg-[var(--danger-soft)]",
+                            canCallBack && "hover:border-[var(--danger)]/45"
+                        )
+                        : clsx(
+                            "border-[var(--border)] bg-[var(--surface)]",
+                            canCallBack && "hover:border-[var(--border-strong)] hover:bg-[var(--surface-2)]"
+                        )
                 )}
             >
                 <span
                     className={clsx(
-                        "flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full",
-                        missed ? "bg-red-500/20" : "bg-slate-600/60"
+                        "flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full",
+                        missed
+                            ? "bg-[var(--danger)]/15 text-[var(--danger-text)]"
+                            : "bg-[var(--primary-soft-strong)] text-[var(--primary)]"
                     )}
                 >
-                    <Icon
-                        size={16}
-                        className={missed ? "text-red-400" : "text-slate-200"}
-                    />
+                    <Icon size={16} />
                 </span>
 
                 <span className="min-w-0">
                     <span
                         className={clsx(
-                            "block truncate font-medium",
-                            missed ? "text-red-300" : "text-slate-100"
+                            "block truncate text-sm font-semibold",
+                            missed ? "text-[var(--danger-text)]" : "text-[var(--text)]"
                         )}
                     >
                         {label}
                     </span>
 
-                    <span className="mt-0.5 flex items-center gap-2 text-[11px] text-slate-400">
+                    <span className="mt-0.5 flex items-center gap-1.5 text-[11px] text-[var(--muted)]">
                         {detail && <span className="tabular-nums">{detail}</span>}
                         {detail && timestamp && <span aria-hidden="true">·</span>}
-                        {timestamp && <span>{timestamp}</span>}
+                        {timestamp && <span className="tabular-nums">{timestamp}</span>}
                     </span>
                 </span>
             </button>

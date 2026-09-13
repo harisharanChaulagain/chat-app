@@ -5,13 +5,15 @@ import { Providers } from "./providers";
 import UserProfile from "./components/UserProfile";
 import { SocketProvider } from "@/context/SocketContext";
 import { CallProvider } from "@/context/CallContext";
+import { ThemeProvider, THEME_INIT_SCRIPT } from "@/context/ThemeContext";
 import CallModal from "@/components/CallModal";
-import { Toaster } from "react-hot-toast";
+import AppToaster from "@/components/ui/AppToaster";
 
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700", "800", "900"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -27,7 +29,11 @@ export const viewport: Viewport = {
   // Pinch-zoom stays available — capping it would fail WCAG 1.4.4.
   maximumScale: 5,
   viewportFit: "cover",
-  themeColor: "#0a0a0f",
+  // Matches the light/dark app background so the browser chrome blends in.
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#F7F8FC" },
+    { media: "(prefers-color-scheme: dark)", color: "#0E1016" },
+  ],
 };
 
 export default function RootLayout({
@@ -36,45 +42,26 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        {/* Stamps the saved theme on <html> before first paint, so a dark-mode
+            user never sees a white flash. */}
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+      </head>
       <body className={`${inter.variable} antialiased`}>
-        <Toaster
-          position="top-right"
-          toastOptions={{
-            style: {
-              background: '#1c1c28',
-              color: '#f0f0f5',
-              border: '1px solid rgba(255,255,255,0.06)',
-              borderRadius: '12px',
-              fontSize: '14px',
-              fontFamily: "'Inter', system-ui, sans-serif",
-            },
-            success: {
-              duration: 3000,
-              iconTheme: {
-                primary: '#22c55e',
-                secondary: '#f0f0f5',
-              },
-            },
-            error: {
-              duration: 4000,
-              iconTheme: {
-                primary: '#ef4444',
-                secondary: '#f0f0f5',
-              },
-            },
-          }}
-        />
-        <Providers>
-          <SocketProvider>
-            <CallProvider>
-              {children}
-              {/* Mounted globally so a call can ring in from any page */}
-              <CallModal />
-            </CallProvider>
-          </SocketProvider>
-          <UserProfile />
-        </Providers>
+        <ThemeProvider>
+          <AppToaster />
+          <Providers>
+            <SocketProvider>
+              <CallProvider>
+                {children}
+                {/* Mounted globally so a call can ring in from any page */}
+                <CallModal />
+              </CallProvider>
+            </SocketProvider>
+            <UserProfile />
+          </Providers>
+        </ThemeProvider>
       </body>
     </html>
   );

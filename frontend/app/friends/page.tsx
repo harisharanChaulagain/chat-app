@@ -38,27 +38,34 @@ const FILTERS: { key: FilterKey; label: string }[] = [
   { key: "following", label: "Friends" },
 ];
 
+/**
+ * Avatar fills stay inside the brand family — indigo through fuchsia with two
+ * warm outliers — so a grid of faces reads as one palette, not confetti.
+ */
 const AVATAR_GRADIENTS = [
-  "from-violet-500 to-indigo-600",
-  "from-cyan-500 to-blue-600",
-  "from-fuchsia-500 to-purple-600",
-  "from-emerald-500 to-teal-600",
-  "from-amber-500 to-orange-600",
-  "from-rose-500 to-pink-600",
+  "linear-gradient(135deg, #635BFF 0%, #8B5CF6 100%)",
+  "linear-gradient(135deg, #7C6BFF 0%, #C084FC 100%)",
+  "linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%)",
+  "linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%)",
+  "linear-gradient(135deg, #5B8DEF 0%, #635BFF 100%)",
+  "linear-gradient(135deg, #635BFF 0%, #22C55E 100%)",
 ];
 
 const STATUS_BADGES: Record<FollowStatus, { label: string; className: string } | null> = {
   following: {
     label: "Friend",
-    className: "text-[var(--color-success)] bg-[rgba(34,197,94,0.1)] border-[rgba(34,197,94,0.2)]",
+    className:
+      "text-[var(--success)] bg-[var(--success-soft)] border-[var(--success)]/20",
   },
   followBack: {
     label: "Follows you",
-    className: "text-[var(--accent-end)] bg-[rgba(6,182,212,0.1)] border-[rgba(6,182,212,0.2)]",
+    className:
+      "text-[var(--primary)] bg-[var(--primary-soft-strong)] border-[var(--primary)]/20",
   },
   requested: {
     label: "Pending",
-    className: "text-[var(--color-warning)] bg-[rgba(245,158,11,0.1)] border-[rgba(245,158,11,0.2)]",
+    className:
+      "text-[var(--warning)] bg-[rgba(245,158,11,0.12)] border-[rgba(245,158,11,0.22)]",
   },
   follow: null,
 };
@@ -185,31 +192,28 @@ const FriendsPage = () => {
   };
 
   return (
-    <main className="flex h-screen-dvh w-full overflow-hidden bg-[var(--bg-primary)] text-[var(--text-primary)]">
+    <main className="flex h-screen-dvh w-full overflow-hidden bg-[var(--bg)] text-[var(--text)]">
       <Sidebar />
 
       <div className="relative flex min-w-0 flex-1 flex-col">
-        {/* Ambient background glows */}
-        <div className="pointer-events-none absolute inset-0 overflow-hidden">
-          <div className="absolute -right-40 -top-48 h-[320px] w-[320px] rounded-full bg-[radial-gradient(circle,rgba(139,92,246,0.12)_0%,transparent_70%)] animate-float sm:h-[520px] sm:w-[520px]" />
-          <div
-            className="absolute -bottom-56 -left-32 h-[280px] w-[280px] rounded-full bg-[radial-gradient(circle,rgba(6,182,212,0.09)_0%,transparent_70%)] sm:h-[440px] sm:w-[440px]"
-            style={{ animation: "float 4s ease-in-out infinite 1s" }}
-          />
-        </div>
-
         {/* Header */}
-        <header className="relative z-10 flex-shrink-0 border-b border-[var(--glass-border)] bg-[var(--bg-secondary)]/60 px-4 pb-4 pt-5 backdrop-blur-xl sm:px-6 md:px-10 md:pb-5 md:pt-7">
+        <header className="relative z-10 flex-shrink-0 border-b border-[var(--border)] bg-[var(--surface)] px-4 pb-4 pt-5 sm:px-6 md:px-10 md:pb-5 md:pt-7">
           <div className="mx-auto max-w-6xl">
             <div className="flex flex-wrap items-start justify-between gap-3 sm:gap-4">
               <div className="animate-fade-in">
-                <h1 className="flex items-center gap-2.5 text-xl font-bold tracking-tight sm:gap-3 sm:text-2xl md:text-3xl">
-                  <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--accent-start)] to-[var(--accent-end)] shadow-[var(--shadow-glow)] sm:h-10 sm:w-10">
-                    <Users className="h-4.5 w-4.5 text-white sm:h-5 sm:w-5" />
+                <h1 className="flex items-center gap-2.5 text-xl font-bold tracking-tight sm:gap-3 sm:text-2xl md:text-[28px]">
+                  <span
+                    className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-[var(--radius-md)] sm:h-10 sm:w-10"
+                    style={{
+                      background: "var(--gradient-brand)",
+                      boxShadow: "var(--shadow-brand)",
+                    }}
+                  >
+                    <Users className="h-[18px] w-[18px] text-white sm:h-5 sm:w-5" />
                   </span>
-                  Discover <span className="gradient-text">People</span>
+                  Discover people
                 </h1>
-                <p className="mt-2 max-w-prose text-xs text-[var(--text-secondary)] sm:text-sm">
+                <p className="mt-2 max-w-prose text-[13px] text-[var(--muted)] sm:text-sm">
                   Follow someone back to unlock mutual chats, voice and video calls.
                 </p>
               </div>
@@ -218,7 +222,7 @@ const FriendsPage = () => {
                 onClick={() => refetch()}
                 disabled={isFetching}
                 aria-label="Refresh people"
-                className="flex flex-shrink-0 items-center gap-2 rounded-xl border border-[var(--glass-border)] bg-[var(--glass-bg)] px-3 py-2 text-sm font-medium text-[var(--text-secondary)] transition-all duration-200 hover:border-[var(--glass-border-hover)] hover:bg-[var(--glass-bg-strong)] hover:text-[var(--text-primary)] disabled:cursor-not-allowed disabled:opacity-60 sm:px-4 sm:py-2.5"
+                className="flex flex-shrink-0 items-center gap-2 rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm font-medium text-[var(--muted)] transition-all duration-200 hover:border-[var(--border-strong)] hover:bg-[var(--surface-2)] hover:text-[var(--text)] disabled:cursor-not-allowed disabled:opacity-60 sm:px-4 sm:py-2.5"
               >
                 <RefreshCw
                   className={`h-4 w-4 ${isFetching ? "animate-spin" : ""}`}
@@ -229,20 +233,20 @@ const FriendsPage = () => {
             </div>
 
             {/* Search */}
-            <div className="relative mt-5 w-full max-w-md sm:mt-6">
-              <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-muted)]" />
+            <div className="group relative mt-5 w-full max-w-md sm:mt-6">
+              <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--muted-2)] transition-colors duration-200 group-focus-within:text-[var(--primary)]" />
               <input
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
                 placeholder="Search by name or email…"
                 aria-label="Search people"
-                className="input-dark pl-11 pr-10"
+                className="field field-sunken pl-11 pr-10"
               />
               {query && (
                 <button
                   onClick={() => setQuery("")}
                   aria-label="Clear search"
-                  className="absolute right-3 top-1/2 -translate-y-1/2 rounded-md p-1 text-[var(--text-muted)] transition-colors hover:text-[var(--text-primary)]"
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded-full p-1.5 text-[var(--muted-2)] transition-colors hover:bg-[var(--surface-3)] hover:text-[var(--text)]"
                 >
                   <X className="h-4 w-4" />
                 </button>
@@ -257,18 +261,18 @@ const FriendsPage = () => {
                   <button
                     key={item.key}
                     onClick={() => setFilter(item.key)}
-                    className={`flex flex-shrink-0 items-center gap-2 rounded-full px-3.5 py-2 text-xs font-medium transition-all duration-200 sm:px-4 sm:text-sm ${
+                    className={`flex flex-shrink-0 items-center gap-2 rounded-full border px-3.5 py-2 text-xs font-medium transition-all duration-200 sm:px-4 sm:text-sm ${
                       isActive
-                        ? "bg-gradient-to-r from-[var(--accent-start)] to-[var(--accent-mid)] text-white shadow-[var(--shadow-glow)]"
-                        : "border border-[var(--glass-border)] text-[var(--text-secondary)] hover:border-[var(--glass-border-hover)] hover:bg-[var(--glass-bg)] hover:text-[var(--text-primary)]"
+                        ? "border-transparent bg-[var(--primary)] text-white shadow-[var(--shadow-brand)]"
+                        : "border-[var(--border)] bg-[var(--surface)] text-[var(--muted)] hover:border-[var(--border-strong)] hover:bg-[var(--surface-2)] hover:text-[var(--text)]"
                     }`}
                   >
                     {item.label}
                     <span
-                      className={`rounded-full px-1.5 py-0.5 text-xs font-semibold tabular-nums ${
+                      className={`rounded-full px-1.5 py-0.5 text-[11px] font-semibold tabular-nums ${
                         isActive
-                          ? "bg-white/20 text-white"
-                          : "bg-[var(--glass-bg-strong)] text-[var(--text-muted)]"
+                          ? "bg-white/25 text-white"
+                          : "bg-[var(--surface-2)] text-[var(--muted-2)]"
                       }`}
                     >
                       {counts[item.key]}
@@ -287,13 +291,14 @@ const FriendsPage = () => {
 
             {!isPending && error && (
               <StateCard
-                icon={<AlertCircle className="h-7 w-7 text-[var(--color-error)]" />}
+                icon={<AlertCircle className="h-7 w-7 text-[var(--danger)]" />}
+                tone="danger"
                 title="Couldn't load people"
                 description="Something went wrong while fetching users. Check your connection and try again."
                 action={
                   <button
                     onClick={() => refetch()}
-                    className="gradient-btn mt-5 inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold"
+                    className="btn-primary mt-5 inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold"
                   >
                     <RefreshCw className="h-4 w-4" />
                     Try again
@@ -306,9 +311,9 @@ const FriendsPage = () => {
               <StateCard
                 icon={
                   query ? (
-                    <SearchX className="h-7 w-7 text-[var(--accent-start)]" />
+                    <SearchX className="h-7 w-7 text-[var(--primary)]" />
                   ) : (
-                    <Users className="h-7 w-7 text-[var(--accent-start)]" />
+                    <Users className="h-7 w-7 text-[var(--primary)]" />
                   )
                 }
                 title={query ? "No matches found" : "Nothing here yet"}
@@ -323,7 +328,7 @@ const FriendsPage = () => {
                   query ? (
                     <button
                       onClick={() => setQuery("")}
-                      className="mt-5 inline-flex items-center gap-2 rounded-xl border border-[var(--glass-border)] px-5 py-2.5 text-sm font-medium text-[var(--text-secondary)] transition-all duration-200 hover:border-[var(--glass-border-hover)] hover:bg-[var(--glass-bg)] hover:text-[var(--text-primary)]"
+                      className="btn-secondary mt-5 inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium"
                     >
                       <X className="h-4 w-4" />
                       Clear search
@@ -331,7 +336,7 @@ const FriendsPage = () => {
                   ) : filter !== "all" ? (
                     <button
                       onClick={() => setFilter("all")}
-                      className="mt-5 inline-flex items-center gap-2 rounded-xl border border-[var(--glass-border)] px-5 py-2.5 text-sm font-medium text-[var(--text-secondary)] transition-all duration-200 hover:border-[var(--glass-border-hover)] hover:bg-[var(--glass-bg)] hover:text-[var(--text-primary)]"
+                      className="btn-secondary mt-5 inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium"
                     >
                       <Users className="h-4 w-4" />
                       Show everyone
@@ -391,30 +396,27 @@ const PersonCard = ({
 
   return (
     <article
-      className="glass-card group relative overflow-hidden rounded-2xl p-4 opacity-0 animate-fade-in-up sm:p-5"
+      className="card card-interactive group relative overflow-hidden p-4 opacity-0 animate-fade-in-up sm:p-5"
       style={{
         animationDelay: `${Math.min(index, 11) * 45}ms`,
         animationFillMode: "forwards",
       }}
     >
       {/* Hover wash */}
-      <div className="pointer-events-none absolute inset-0 bg-[var(--gradient-subtle)] opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+      <div className="pointer-events-none absolute inset-0 bg-[var(--gradient-wash)] opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
       <div className="relative z-10">
         <div className="flex items-start gap-3 sm:gap-4">
           <div className="relative flex-shrink-0">
             <div
-              className={`flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br ${gradientFor(
-                user._id
-              )} text-base font-bold text-white shadow-[var(--shadow-md)] transition-transform duration-300 group-hover:scale-105 sm:h-[52px] sm:w-[52px]`}
+              className="flex h-12 w-12 items-center justify-center rounded-[var(--radius-lg)] text-base font-bold text-white transition-transform duration-300 group-hover:scale-105 sm:h-[52px] sm:w-[52px]"
+              style={{ background: gradientFor(user._id) }}
             >
               {initialsOf(user.name)}
             </div>
             <span
-              className={`absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full border-2 border-[var(--bg-primary)] ${
-                isOnline
-                  ? "bg-[var(--color-success)] animate-pulse-glow"
-                  : "bg-[var(--text-muted)]"
+              className={`absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full border-2 border-[var(--surface)] ${
+                isOnline ? "bg-[var(--success)]" : "bg-[var(--muted-2)]"
               }`}
               title={isOnline ? "Online" : "Offline"}
             />
@@ -422,7 +424,7 @@ const PersonCard = ({
 
           <div className="min-w-0 flex-1">
             <div className="flex items-start justify-between gap-2">
-              <h2 className="truncate text-base font-semibold text-[var(--text-primary)]">
+              <h2 className="truncate text-base font-semibold text-[var(--text)]">
                 {user.name}
               </h2>
 
@@ -435,13 +437,19 @@ const PersonCard = ({
               )}
             </div>
 
-            <p className="mt-0.5 truncate text-sm text-[var(--text-muted)]">
+            <p className="mt-0.5 truncate text-[13px] text-[var(--muted)]">
               {user.email}
             </p>
 
-            <p className="mt-1.5 text-xs font-medium text-[var(--text-secondary)]">
+            <p className="mt-1.5 flex items-center gap-1.5 text-xs font-medium text-[var(--muted)]">
+              <span
+                aria-hidden="true"
+                className={`h-1.5 w-1.5 rounded-full ${
+                  isOnline ? "bg-[var(--success)]" : "bg-[var(--muted-2)]"
+                }`}
+              />
               {isOnline ? (
-                <span className="text-[var(--color-success)]">Active now</span>
+                <span className="text-[var(--success)]">Active now</span>
               ) : (
                 "Offline"
               )}
@@ -486,7 +494,7 @@ const ActionButtons = ({
         <>
           <button
             onClick={() => onMessage(user)}
-            className="gradient-btn flex flex-1 items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold"
+            className="btn-primary flex flex-1 items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold"
           >
             <MessageCircle className="h-4 w-4" />
             Message
@@ -497,7 +505,7 @@ const ActionButtons = ({
             disabled={isBusy}
             aria-label={`Unfollow ${user.name}`}
             title={`Unfollow ${user.name}`}
-            className="flex h-[42px] w-[42px] flex-shrink-0 items-center justify-center rounded-xl border border-[var(--glass-border)] text-[var(--text-muted)] transition-all duration-200 hover:border-[rgba(239,68,68,0.3)] hover:bg-[rgba(239,68,68,0.1)] hover:text-[var(--color-error)] disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex h-[42px] w-[42px] flex-shrink-0 items-center justify-center rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--surface)] text-[var(--muted)] transition-all duration-200 hover:border-[var(--danger)]/30 hover:bg-[var(--danger-soft)] hover:text-[var(--danger-text)] disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isBusy ? spinner : <UserMinus className="h-4 w-4" />}
           </button>
@@ -509,10 +517,10 @@ const ActionButtons = ({
         <button
           onClick={() => onFollow(user._id)}
           disabled={isBusy}
-          className="gradient-btn flex w-full items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-60"
+          className="btn-primary flex w-full items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-60"
         >
           {isBusy ? spinner : <UserCheck className="h-4 w-4" />}
-          {isBusy ? "Following…" : "Follow Back"}
+          {isBusy ? "Following…" : "Follow back"}
         </button>
       );
 
@@ -525,7 +533,7 @@ const ActionButtons = ({
              the aria-label/title carry the intent there. */
           aria-label={`Cancel follow request to ${user.name}`}
           title={`Cancel follow request to ${user.name}`}
-          className="group/btn flex w-full items-center justify-center gap-2 rounded-xl border border-[rgba(245,158,11,0.25)] bg-[rgba(245,158,11,0.1)] px-4 py-2.5 text-sm font-medium text-[var(--color-warning)] transition-all duration-200 hover:border-[rgba(239,68,68,0.3)] hover:bg-[rgba(239,68,68,0.1)] hover:text-[var(--color-error)] disabled:cursor-not-allowed disabled:opacity-60"
+          className="group/btn flex w-full items-center justify-center gap-2 rounded-[var(--radius-md)] border border-[rgba(245,158,11,0.25)] bg-[rgba(245,158,11,0.1)] px-4 py-2.5 text-sm font-medium text-[var(--warning)] transition-all duration-200 hover:border-[var(--danger)]/30 hover:bg-[var(--danger-soft)] hover:text-[var(--danger-text)] disabled:cursor-not-allowed disabled:opacity-60"
         >
           {isBusy ? (
             <>
@@ -550,7 +558,7 @@ const ActionButtons = ({
         <button
           onClick={() => onFollow(user._id)}
           disabled={isBusy}
-          className="flex w-full items-center justify-center gap-2 rounded-xl border border-[var(--glass-border)] bg-[var(--glass-bg-strong)] px-4 py-2.5 text-sm font-semibold text-[var(--text-primary)] transition-all duration-200 hover:border-[var(--accent-start)] hover:bg-[rgba(139,92,246,0.12)] hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
+          className="flex w-full items-center justify-center gap-2 rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--surface-2)] px-4 py-2.5 text-sm font-semibold text-[var(--text)] transition-all duration-200 hover:border-[var(--primary)]/40 hover:bg-[var(--primary-soft)] hover:text-[var(--primary)] disabled:cursor-not-allowed disabled:opacity-60"
         >
           {isBusy ? spinner : <UserPlus className="h-4 w-4" />}
           {isBusy ? "Sending…" : "Follow"}
@@ -564,17 +572,17 @@ const CardSkeletonGrid = () => (
     {Array.from({ length: 6 }).map((_, index) => (
       <div
         key={index}
-        className="rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-bg)] p-4 sm:p-5"
+        className="rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--surface)] p-4 sm:p-5"
       >
         <div className="flex items-start gap-3 sm:gap-4">
-          <div className="h-12 w-12 flex-shrink-0 overflow-hidden rounded-2xl bg-[var(--bg-elevated)] animate-shimmer sm:h-[52px] sm:w-[52px]" />
+          <div className="skeleton h-12 w-12 flex-shrink-0 rounded-[var(--radius-lg)] sm:h-[52px] sm:w-[52px]" />
           <div className="min-w-0 flex-1 space-y-2.5 pt-1">
-            <div className="h-4 w-2/5 rounded bg-[var(--bg-elevated)] animate-shimmer" />
-            <div className="h-3 w-4/5 rounded bg-[var(--bg-elevated)] animate-shimmer" />
-            <div className="h-3 w-1/4 rounded bg-[var(--bg-elevated)] animate-shimmer" />
+            <div className="skeleton h-4 w-2/5 rounded" />
+            <div className="skeleton h-3 w-4/5 rounded" />
+            <div className="skeleton h-3 w-1/4 rounded" />
           </div>
         </div>
-        <div className="mt-4 h-[42px] w-full rounded-xl bg-[var(--bg-elevated)] animate-shimmer sm:mt-5" />
+        <div className="skeleton mt-4 h-[42px] w-full rounded-[var(--radius-md)] sm:mt-5" />
       </div>
     ))}
   </div>
@@ -585,18 +593,28 @@ const StateCard = ({
   title,
   description,
   action,
+  tone = "brand",
 }: {
   icon: React.ReactNode;
   title: string;
   description: string;
   action?: React.ReactNode;
+  tone?: "brand" | "danger";
 }) => (
   <div className="flex flex-col items-center justify-center px-2 py-14 text-center animate-fade-in sm:py-20">
-    <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-bg)] sm:mb-5 sm:h-16 sm:w-16">
+    <div
+      className={`mb-4 flex h-14 w-14 items-center justify-center rounded-[var(--radius-xl)] border sm:mb-5 sm:h-16 sm:w-16 ${
+        tone === "danger"
+          ? "border-[var(--danger)]/20 bg-[var(--danger-soft)]"
+          : "border-[var(--border)] bg-[var(--surface)] shadow-[var(--shadow-xs)]"
+      }`}
+    >
       {icon}
     </div>
-    <h3 className="text-base font-semibold text-[var(--text-primary)] sm:text-lg">{title}</h3>
-    <p className="mt-2 max-w-sm text-sm leading-relaxed text-[var(--text-secondary)]">
+    <h3 className="text-base font-semibold text-[var(--text)] sm:text-lg">
+      {title}
+    </h3>
+    <p className="mt-2 max-w-sm text-sm leading-relaxed text-[var(--muted)]">
       {description}
     </p>
     {action}

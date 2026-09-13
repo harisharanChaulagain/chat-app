@@ -1,12 +1,17 @@
 "use client";
 
 import React, { useEffect, useRef, useState, useCallback } from "react";
+import { AlertCircle, MessageCircleHeart } from "lucide-react";
 import ChatMessage from "./ui/ChatMessage";
 import CallLogMessage from "./ui/CallLogMessage";
 import { useGetMessage } from "@/hooks/useGetMessage";
 import useConversationStore from "@/store/useConversationStore";
 import useGetSocketMessage from "@/context/useGetSocketMessage";
 import { useUserStore } from "@/store/userStore";
+
+/** Shared scroll-area shell so every state sits in the same box. */
+const THREAD_CLASSES =
+  "min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 py-4 sm:px-5";
 
 export default function Message() {
   const { messages, addMessagesAtStart, typingUser, selectedConversation } = useConversationStore();
@@ -59,78 +64,146 @@ export default function Message() {
 
   if (isLoading && page === 0)
     return (
-      <div className="min-h-0 flex-1 p-4 text-sm text-slate-400">
-        Loading messages...
+      <div className={THREAD_CLASSES}>
+        <BubbleSkeletons />
       </div>
     );
+
   if (error)
     return (
-      <div className="min-h-0 flex-1 p-4 text-sm text-red-500">
-        Failed to load messages.
+      <div className={`${THREAD_CLASSES} flex items-center justify-center`}>
+        <div className="flex max-w-xs flex-col items-center text-center">
+          <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-[var(--radius-lg)] border border-[var(--danger)]/20 bg-[var(--danger-soft)]">
+            <AlertCircle className="h-6 w-6 text-[var(--danger)]" />
+          </div>
+          <p className="text-sm font-semibold text-[var(--text)]">
+            Couldn&apos;t load messages
+          </p>
+          <p className="mt-1 text-[13px] leading-relaxed text-[var(--muted)]">
+            Something went wrong fetching this conversation.
+          </p>
+        </div>
       </div>
     );
+
   return (
     <div
       ref={messageContainerRef}
-      className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 py-2 text-white sm:px-4"
+      className={THREAD_CLASSES}
       onScroll={handleScroll}
     >
-      {messages.map((msg, index) => {
-        const isSender = msg.senderId?._id === user?._id;
-        const timestamp = new Date(msg.createdAt).toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        });
+      {/* Loading older pages: a quiet inline pill rather than a layout shift. */}
+      {isLoading && page > 0 && (
+        <div className="mb-4 flex justify-center">
+          <span className="flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-xs font-medium text-[var(--muted)]">
+            <span className="spinner h-3.5 w-3.5" />
+            Loading earlier messages
+          </span>
+        </div>
+      )}
 
-        if (msg.messageType === "call" && msg.callInfo) {
+      {messages.length === 0 && (
+        <div className="flex h-full flex-col items-center justify-center px-4 text-center animate-fade-in">
+          <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-[var(--radius-xl)] border border-[var(--border)] bg-[var(--surface)] shadow-[var(--shadow-xs)]">
+            <MessageCircleHeart className="h-7 w-7 text-[var(--primary)]" />
+          </div>
+          <p className="text-sm font-semibold text-[var(--text)]">
+            Say hello to {selectedConversation?.name?.split(" ")[0] ?? "them"}
+          </p>
+          <p className="mt-1 max-w-xs text-[13px] leading-relaxed text-[var(--muted)]">
+            This is the very beginning of your conversation.
+          </p>
+        </div>
+      )}
+
+      <div className="space-y-1.5">
+        {messages.map((msg, index) => {
+          const isSender = msg.senderId?._id === user?._id;
+          const timestamp = new Date(msg.createdAt).toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+
+          if (msg.messageType === "call" && msg.callInfo) {
+            return (
+              <CallLogMessage
+                key={`${msg._id}-${index}`}
+                callInfo={msg.callInfo}
+                isSender={isSender}
+                timestamp={timestamp}
+              />
+            );
+          }
+
           return (
-            <CallLogMessage
+            <ChatMessage
               key={`${msg._id}-${index}`}
-              callInfo={msg.callInfo}
+              message={msg.message}
               isSender={isSender}
+              avatarUrl="https://i.pravatar.cc/150?img=8"
               timestamp={timestamp}
             />
           );
-        }
+        })}
 
-        return (
-          <ChatMessage
-            key={`${msg._id}-${index}`}
-            message={msg.message}
-            isSender={isSender}
-            avatarUrl="https://i.pravatar.cc/150?img=8"
-            timestamp={timestamp}
-          />
-        );
-      })}
-
-      {typingUser === selectedConversation?._id &&
-        <div
-          className="mb-2 flex items-end justify-start"
-        >
-          <img
-            src="https://i.pravatar.cc/150?img=8"
-            alt="avatar"
-            className="mr-2 h-8 w-8 flex-shrink-0 rounded-full"
-          />
-          <div
-            className="max-w-[75%] rounded-r-2xl rounded-tl-3xl bg-gray-200 px-4 py-2 text-sm text-black"
-          >
-            <div className="flex gap-1 py-1">
-              <span className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" />
-              <span
-                className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"
-                style={{ animationDelay: "0.2s" }}
-              />
-              <span
-                className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"
-                style={{ animationDelay: "0.4s" }}
-              />
+        {typingUser === selectedConversation?._id && (
+          <div className="flex items-end gap-2 animate-message-in">
+            <img
+              src="https://i.pravatar.cc/150?img=8"
+              alt=""
+              aria-hidden="true"
+              className="h-7 w-7 flex-shrink-0 rounded-full bg-[var(--surface-2)] object-cover ring-1 ring-[var(--border)]"
+            />
+            <div
+              className="rounded-[18px] rounded-bl-[6px] border border-[var(--border)] bg-[var(--surface)] px-4 py-3 shadow-[var(--shadow-xs)]"
+              role="status"
+              aria-label={`${selectedConversation?.name ?? "They"} is typing`}
+            >
+              <div className="flex items-center gap-1">
+                <span className="h-1.5 w-1.5 rounded-full bg-[var(--muted)] animate-typing-dot" />
+                <span
+                  className="h-1.5 w-1.5 rounded-full bg-[var(--muted)] animate-typing-dot"
+                  style={{ animationDelay: "0.15s" }}
+                />
+                <span
+                  className="h-1.5 w-1.5 rounded-full bg-[var(--muted)] animate-typing-dot"
+                  style={{ animationDelay: "0.3s" }}
+                />
+              </div>
             </div>
           </div>
-
-        </div>}
-
+        )}
+      </div>
     </div>
   );
 }
+
+/** Alternating in/out placeholder bubbles while the first page loads. */
+const BubbleSkeletons = () => {
+  const rows = [
+    { mine: false, width: "62%" },
+    { mine: true, width: "48%" },
+    { mine: false, width: "70%" },
+    { mine: true, width: "38%" },
+    { mine: false, width: "54%" },
+    { mine: true, width: "60%" },
+  ];
+
+  return (
+    <div className="space-y-3">
+      {rows.map((row, index) => (
+        <div
+          key={index}
+          className={`flex items-end gap-2 ${row.mine ? "justify-end" : "justify-start"}`}
+        >
+          {!row.mine && <div className="skeleton h-7 w-7 flex-shrink-0 rounded-full" />}
+          <div
+            className={`skeleton h-11 ${row.mine ? "rounded-[18px] rounded-br-[6px]" : "rounded-[18px] rounded-bl-[6px]"}`}
+            style={{ width: row.width, maxWidth: "18rem" }}
+          />
+          {row.mine && <div className="skeleton h-7 w-7 flex-shrink-0 rounded-full" />}
+        </div>
+      ))}
+    </div>
+  );
+};

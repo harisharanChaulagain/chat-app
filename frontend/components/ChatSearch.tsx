@@ -1,21 +1,44 @@
+"use client";
+
+import { Search, X } from 'lucide-react'
 import React from 'react'
 
-export default function ChatSearch() {
+type ChatSearchProps = {
+    value?: string;
+    onChange?: (value: string) => void;
+};
+
+export default function ChatSearch({ value, onChange }: ChatSearchProps) {
     return (
         <form
-            //   onSubmit={(e) => e.preventDefault()}
-            className="mt-4 w-full max-w-md">
-            <div className="relative">
-                <svg xmlns="http://www.w3.org/2000/svg" className="absolute top-0 bottom-0 left-3 my-auto h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
+            onSubmit={(e) => e.preventDefault()}
+            role="search"
+            className="w-full">
+            <div className="group relative">
+                <Search
+                    aria-hidden="true"
+                    className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--muted-2)] transition-colors duration-200 group-focus-within:text-[var(--primary)]"
+                />
                 <input
                     type="search"
-                    placeholder="Search"
+                    placeholder="Search messages"
                     aria-label="Search chats"
-                    /* 16px base on touch widths avoids the iOS focus zoom. */
-                    className="w-full rounded-md border border-transparent bg-slate-900 py-2.5 pl-11 pr-4 text-base text-white outline-none focus:border-gray-600 sm:py-3 sm:text-sm"
+                    value={value}
+                    onChange={(event) => onChange?.(event.target.value)}
+                    /* `field-sunken` reads as a recess inside the white sidebar;
+                       16px base on touch widths avoids the iOS focus zoom. */
+                    className="field field-sunken pl-10 pr-10 [&::-webkit-search-cancel-button]:hidden"
                 />
+                {value && onChange && (
+                    <button
+                        type="button"
+                        onClick={() => onChange('')}
+                        aria-label="Clear search"
+                        className="absolute right-2.5 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full text-[var(--muted-2)] transition-colors duration-200 hover:bg-[var(--surface-3)] hover:text-[var(--text)]"
+                    >
+                        <X className="h-3.5 w-3.5" />
+                    </button>
+                )}
             </div>
         </form>
     )

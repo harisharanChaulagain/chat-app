@@ -17,35 +17,40 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
     return (
         <div
             className={clsx(
-                "flex items-end mb-2",
+                "group flex items-end gap-2 animate-message-in",
                 isSender ? "justify-end" : "justify-start"
             )}
         >
             {!isSender && avatarUrl && (
                 <img
                     src={avatarUrl}
-                    alt="avatar"
-                    className="mr-2 h-8 w-8 flex-shrink-0 rounded-full"
+                    alt=""
+                    aria-hidden="true"
+                    className="h-7 w-7 flex-shrink-0 rounded-full bg-[var(--surface-2)] object-cover ring-1 ring-[var(--border)]"
                 />
             )}
 
             {/* Percentage cap instead of a fixed `max-w-xs`: on a 360px phone a
-                320px bubble plus the avatar overflowed the row. */}
+                320px bubble plus the avatar overflowed the row. The flattened
+                bottom corner on the sender's side is the tail. */}
             <div
                 className={clsx(
-                    "max-w-[75%] px-3.5 py-2 text-sm break-words sm:max-w-md sm:px-4 md:max-w-lg",
+                    "max-w-[76%] px-3.5 py-2 text-[15px] leading-[1.45] break-words sm:max-w-md sm:px-4 md:max-w-lg",
                     isSender
-                        ? "bg-blue-500 text-white rounded-l-2xl rounded-tr-3xl"
-                        : "bg-gray-200 text-black rounded-r-2xl rounded-tl-3xl"
+                        ? "rounded-[18px] rounded-br-[6px] text-white shadow-[var(--shadow-xs)]"
+                        : "rounded-[18px] rounded-bl-[6px] border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] shadow-[var(--shadow-xs)]"
                 )}
+                style={
+                    isSender ? { background: "var(--gradient-bubble)" } : undefined
+                }
             >
                 <p className="whitespace-pre-wrap">{message}</p>
 
                 {timestamp && (
                     <span
                         className={clsx(
-                            "mt-1 block text-right text-[10px]",
-                            isSender ? "text-blue-100" : "text-gray-500"
+                            "mt-1 block text-right text-[11px] tabular-nums",
+                            isSender ? "text-white/70" : "text-[var(--muted-2)]"
                         )}
                     >
                         {timestamp}
@@ -56,8 +61,9 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
             {isSender && avatarUrl && (
                 <img
                     src={avatarUrl}
-                    alt="avatar"
-                    className="ml-2 h-8 w-8 flex-shrink-0 rounded-full"
+                    alt=""
+                    aria-hidden="true"
+                    className="h-7 w-7 flex-shrink-0 rounded-full bg-[var(--surface-2)] object-cover ring-1 ring-[var(--border)]"
                 />
             )}
         </div>
