@@ -21,9 +21,9 @@ const getInitials = (name: string) => name.trim().charAt(0).toUpperCase() || "?"
  *
  * Two visual modes share one control language:
  *  • video — the remote feed goes full-bleed on a black stage, so every
- *    chrome element (header pill, self-view, control bar) is glass-on-dark.
- *  • audio — no feed to show, so the stage becomes a soft brand wash that
- *    tracks the app theme, and the controls use surface tokens.
+ *    chrome element (header pill, self-view, control bar) is solid dark.
+ *  • audio — no feed to show, so the stage becomes a flat neutral step away
+ *    from the app background, and the controls use surface tokens.
  */
 const CallModal = () => {
     const {
@@ -88,7 +88,7 @@ const CallModal = () => {
         }
     })();
 
-    /** Brand-gradient initials disc with an optional ringing halo. */
+    /** Solid brand initials disc with an optional ringing halo. */
     const avatar = (size: "lg" | "sm", pulse = false) => (
         <div className="relative flex items-center justify-center">
             {pulse && (
@@ -107,15 +107,11 @@ const CallModal = () => {
             )}
             <div
                 className={clsx(
-                    "relative flex items-center justify-center rounded-full font-semibold text-white",
+                    "relative flex items-center justify-center rounded-full bg-[var(--primary-fill)] font-semibold text-white",
                     size === "lg"
                         ? "h-28 w-28 text-5xl sm:h-32 sm:w-32"
                         : "h-24 w-24 text-4xl"
                 )}
-                style={{
-                    background: "var(--gradient-brand)",
-                    boxShadow: "var(--shadow-brand)",
-                }}
             >
                 {getInitials(peerName)}
             </div>
@@ -140,13 +136,13 @@ const CallModal = () => {
             aria-label={title}
             aria-pressed={!active}
             className={clsx(
-                "flex h-12 w-12 items-center justify-center rounded-full border transition-all duration-200 hover:scale-105 active:scale-95 sm:h-14 sm:w-14",
+                "flex h-12 w-12 items-center justify-center rounded-full border transition-colors duration-150 sm:h-14 sm:w-14",
                 onVideoStage
                     ? active
-                        ? "border-white/20 bg-white/12 text-white hover:bg-white/20"
-                        : "border-transparent bg-white text-[#171923]"
+                        ? "border-transparent bg-[#332D2F] text-white hover:bg-[#433B3D]"
+                        : "border-transparent bg-white text-[#1C1A1B]"
                     : active
-                        ? "border-[var(--border)] bg-[var(--surface)] text-[var(--text)] shadow-[var(--shadow-sm)] hover:bg-[var(--surface-2)]"
+                        ? "border-[var(--border)] bg-[var(--surface)] text-[var(--text)] hover:bg-[var(--surface-2)]"
                         : "border-transparent bg-[var(--text)] text-[var(--surface)]"
             )}
         >
@@ -160,7 +156,7 @@ const CallModal = () => {
             onClick={hangUp}
             title="End call"
             aria-label="End call"
-            className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--danger)] text-white shadow-[0_6px_18px_rgba(239,68,68,0.35)] transition-all duration-200 hover:bg-[var(--danger-hover)] hover:scale-105 active:scale-95 sm:h-14 sm:w-14"
+            className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--danger)] text-white transition-colors duration-150 hover:bg-[var(--danger-hover)] sm:h-14 sm:w-14"
         >
             <PhoneOff size={21} />
         </button>
@@ -195,7 +191,7 @@ const CallModal = () => {
                         already showing the same name and status. */}
                     {onVideoStage && (
                         <header className="absolute left-0 right-0 top-0 flex justify-center p-4 sm:justify-start sm:p-6">
-                            <div className="flex min-w-0 max-w-full items-center gap-2.5 rounded-full border border-white/15 bg-black/45 px-4 py-2 text-white backdrop-blur-xl sm:gap-3">
+                            <div className="flex min-w-0 max-w-full items-center gap-2.5 rounded-full bg-[#1C1A1B] px-4 py-2 text-white sm:gap-3">
                                 {status === "connected" && (
                                     <span
                                         aria-hidden="true"
@@ -237,10 +233,10 @@ const CallModal = () => {
                     {isVideoCall && (
                         <div
                             className={clsx(
-                                "absolute bottom-28 right-3 overflow-hidden rounded-[var(--radius-lg)] border shadow-[var(--shadow-lg)] sm:right-6 sm:bottom-32",
+                                "absolute bottom-28 right-3 overflow-hidden rounded-[var(--radius-lg)] border sm:right-6 sm:bottom-32",
                                 "h-28 w-20 sm:h-40 sm:w-28 md:h-44 md:w-64",
                                 onVideoStage
-                                    ? "border-white/15 bg-black/70"
+                                    ? "border-white/15 bg-[#1C1A1B]"
                                     : "border-[var(--border)] bg-[var(--surface-2)]"
                             )}
                         >
@@ -277,10 +273,10 @@ const CallModal = () => {
                         <div
                             /* `mb-safe` lifts the bar clear of the iOS home bar. */
                             className={clsx(
-                                "mb-safe flex items-center gap-3 rounded-full border px-4 py-3 backdrop-blur-xl sm:gap-4 sm:px-5",
+                                "mb-safe flex items-center gap-3 rounded-full border px-4 py-3 sm:gap-4 sm:px-5",
                                 onVideoStage
-                                    ? "border-white/12 bg-black/45"
-                                    : "border-[var(--border)] bg-[var(--overlay-surface)] shadow-[var(--shadow-lg)]"
+                                    ? "border-transparent bg-[#1C1A1B]"
+                                    : "border-[var(--border)] bg-[var(--surface)] shadow-[var(--shadow-md)]"
                             )}
                         >
                             {controlButton(
@@ -347,7 +343,7 @@ const CallModal = () => {
                                     onClick={declineCall}
                                     title="Decline call"
                                     aria-label="Decline call"
-                                    className="flex h-16 w-16 items-center justify-center rounded-full bg-[var(--danger)] text-white shadow-[0_6px_18px_rgba(239,68,68,0.35)] transition-all duration-200 hover:bg-[var(--danger-hover)] hover:scale-105 active:scale-95"
+                                    className="flex h-16 w-16 items-center justify-center rounded-full bg-[var(--danger)] text-white transition-colors duration-150 hover:bg-[var(--danger-hover)]"
                                 >
                                     <PhoneOff size={24} />
                                 </button>
@@ -362,7 +358,7 @@ const CallModal = () => {
                                     onClick={acceptCall}
                                     title="Accept call"
                                     aria-label="Accept call"
-                                    className="flex h-16 w-16 items-center justify-center rounded-full bg-[var(--success)] text-white shadow-[0_6px_18px_rgba(34,197,94,0.35)] transition-all duration-200 hover:scale-105 active:scale-95 animate-pulse-glow"
+                                    className="flex h-16 w-16 items-center justify-center rounded-full bg-[var(--success)] text-white transition-opacity duration-150 hover:opacity-90 animate-pulse-glow"
                                 >
                                     {callType === "video" ? (
                                         <Video size={24} />
@@ -383,7 +379,7 @@ const CallModal = () => {
                                 type="button"
                                 onClick={hangUp}
                                 disabled={status === "ended"}
-                                className="flex h-16 w-16 items-center justify-center rounded-full bg-[var(--danger)] text-white shadow-[0_6px_18px_rgba(239,68,68,0.35)] transition-all duration-200 hover:bg-[var(--danger-hover)] hover:scale-105 active:scale-95 disabled:opacity-40 disabled:shadow-none disabled:hover:scale-100"
+                                className="flex h-16 w-16 items-center justify-center rounded-full bg-[var(--danger)] text-white transition-colors duration-150 hover:bg-[var(--danger-hover)] disabled:opacity-40"
                                 title={status === "ended" ? "Call ended" : "Cancel call"}
                                 aria-label={status === "ended" ? "Call ended" : "Cancel call"}
                             >

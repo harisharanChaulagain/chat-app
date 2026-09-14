@@ -61,20 +61,16 @@ const ChatBox = () => {
                 onKeyDown={handleKeyPress}
                 placeholder="Message…"
                 aria-label="Message"
-                /* Pill composer; 16px base keeps iOS Safari from zooming the
+                /* Rounded composer; 16px base keeps iOS Safari from zooming the
                    viewport on focus. */
-                className="field field-sunken min-w-0 flex-1 rounded-full px-4 py-2.5"
+                className="field field-sunken min-w-0 flex-1 rounded-[var(--radius-xl)] px-4 py-2.5"
             />
             <button
                 onClick={handleSend}
                 disabled={!canSend}
                 aria-label="Send message"
                 title="Send message"
-                className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full text-white transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-40"
-                style={{
-                    background: canSend ? 'var(--gradient-brand)' : 'var(--muted-2)',
-                    boxShadow: canSend ? 'var(--shadow-brand)' : 'none',
-                }}
+                className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-[var(--primary-fill)] text-white transition-colors duration-150 hover:bg-[var(--primary-fill-hover)] disabled:cursor-not-allowed disabled:bg-[var(--surface-3)] disabled:text-[var(--muted-2)]"
             >
                 <Send className="h-[18px] w-[18px] -translate-x-px" />
             </button>

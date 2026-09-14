@@ -57,10 +57,7 @@ export default function Sidebar({ mobileHidden = false }: SidebarProps) {
   const profileCard = (
     <>
       <div className="mb-3 flex items-center gap-3">
-        <div
-          className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full text-sm font-bold text-white"
-          style={{ background: "var(--gradient-brand)" }}
-        >
+        <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-[var(--primary-fill)] text-sm font-bold text-white">
           {getInitials(user?.name)}
         </div>
         <div className="min-w-0">
@@ -100,11 +97,7 @@ export default function Sidebar({ mobileHidden = false }: SidebarProps) {
           <button
             type="button"
             aria-label="Home"
-            className="flex h-10 w-10 items-center justify-center rounded-[var(--radius-md)] text-white transition-transform duration-200 hover:scale-105 active:scale-95"
-            style={{
-              background: "var(--gradient-brand)",
-              boxShadow: "var(--shadow-brand)",
-            }}
+            className="flex h-10 w-10 items-center justify-center rounded-[var(--radius-md)] bg-[var(--primary-fill)] text-white transition-colors duration-150 hover:bg-[var(--primary-fill-hover)]"
             onClick={() => router.push("/")}
           >
             <MessageCircle className="h-5 w-5" />
@@ -151,10 +144,9 @@ export default function Sidebar({ mobileHidden = false }: SidebarProps) {
             onClick={() => setOpenProfile(!openProfile)}
             aria-label="Account menu"
             aria-expanded={openProfile}
-            className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold text-white ring-2 ring-offset-2 ring-offset-[var(--surface)] transition-all duration-200 hover:scale-105 ${
+            className={`flex h-10 w-10 items-center justify-center rounded-full bg-[var(--primary-fill)] text-sm font-bold text-white ring-2 ring-offset-2 ring-offset-[var(--surface)] transition-colors duration-150 ${
               openProfile ? "ring-[var(--primary)]" : "ring-transparent"
             }`}
-            style={{ background: "var(--gradient-brand)" }}
           >
             {getInitials(user?.name)}
           </button>
@@ -173,7 +165,7 @@ export default function Sidebar({ mobileHidden = false }: SidebarProps) {
 
       {/* ── Mobile: bottom tab bar ── */}
       <nav
-        className={`fixed bottom-0 left-0 right-0 z-40 border-t border-[var(--border)] bg-[var(--overlay-surface)] backdrop-blur-xl pb-safe md:hidden ${
+        className={`fixed bottom-0 left-0 right-0 z-40 border-t border-[var(--border)] bg-[var(--surface)] pb-safe md:hidden ${
           mobileHidden ? "hidden" : "block"
         }`}
       >
@@ -213,10 +205,9 @@ export default function Sidebar({ mobileHidden = false }: SidebarProps) {
             >
               <span className="flex h-8 w-14 items-center justify-center">
                 <span
-                  className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold text-white ring-2 transition-all duration-200 ${
+                  className={`flex h-7 w-7 items-center justify-center rounded-full bg-[var(--primary-fill)] text-xs font-bold text-white ring-2 transition-colors duration-150 ${
                     openProfile ? "ring-[var(--primary)]" : "ring-transparent"
                   }`}
-                  style={{ background: "var(--gradient-brand)" }}
                 >
                   {getInitials(user?.name)}
                 </span>

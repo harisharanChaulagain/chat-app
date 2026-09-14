@@ -37,12 +37,9 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
                 className={clsx(
                     "max-w-[76%] px-3.5 py-2 text-[15px] leading-[1.45] break-words sm:max-w-md sm:px-4 md:max-w-lg",
                     isSender
-                        ? "rounded-[18px] rounded-br-[6px] text-white shadow-[var(--shadow-xs)]"
-                        : "rounded-[18px] rounded-bl-[6px] border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] shadow-[var(--shadow-xs)]"
+                        ? "rounded-[var(--radius-xl)] rounded-br-[5px] bg-[var(--primary-fill)] text-white"
+                        : "rounded-[var(--radius-xl)] rounded-bl-[5px] border border-[var(--border)] bg-[var(--surface)] text-[var(--text)]"
                 )}
-                style={
-                    isSender ? { background: "var(--gradient-bubble)" } : undefined
-                }
             >
                 <p className="whitespace-pre-wrap">{message}</p>
 

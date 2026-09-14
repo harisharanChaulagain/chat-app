@@ -2,81 +2,91 @@
 
 /* ==================================================================
    DESIGN SYSTEM — ChatVerse
-   Light-first, dark-capable. One source of truth for colour, radius,
-   elevation and motion; components reference tokens, never raw hex.
+   A warm, human palette built on one brand colour and warm neutrals.
+   No gradients, no glows: depth comes from borders and spacing.
+   Components reference tokens, never raw hex.
    ================================================================== */
 
 :root {
   color-scheme: light;
 
-  /* ── Brand ── */
-  --primary: #635BFF;
-  --primary-hover: #524BE0;
-  --primary-active: #453FC7;
-  --secondary: #8B5CF6;
+  /* ── Brand ──
+     `--primary` is the brand colour for text, icons, borders and active
+     states. `--primary-fill` is the solid button background and is always
+     paired with white — the two are split so dark mode can lighten the
+     text colour for legibility without washing out button labels. */
+  --primary: #D6336C;
+  /* Hover for brand-coloured *text* and links — deepens, where the dark-mode
+     counterpart lightens, so the direction always increases contrast. */
+  --primary-hover: #AB2453;
+  --primary-fill: #D6336C;
+  --primary-fill-hover: #C22A5F;
+  --primary-fill-active: #AB2453;
 
-  /* Tinted primary washes — used for selected rows, soft badges, focus
-     rings. Kept as rgba so they layer over any surface. */
-  --primary-soft: rgba(99, 91, 255, 0.08);
-  --primary-soft-strong: rgba(99, 91, 255, 0.14);
-  --primary-ring: rgba(99, 91, 255, 0.22);
-  --primary-contrast: #ffffff;
+  /* Tinted brand washes — selected rows, soft badges, focus rings. Kept as
+     rgba so they layer over any surface. */
+  --primary-soft: rgba(214, 51, 108, 0.07);
+  --primary-soft-strong: rgba(214, 51, 108, 0.13);
+  --primary-ring: rgba(214, 51, 108, 0.2);
 
-  /* ── Neutrals ── */
-  --bg: #F7F8FC;
+  /* Solid blush panel — the illustration side of the auth screens and any
+     full-bleed tinted section. Solid, not a wash, so text on it is stable. */
+  --brand-panel: #FCF0F4;
+
+  /* ── Accent ──
+     One supporting hue, used sparingly so an all-rose UI does not go flat. */
+  --accent: #0E7C6B;
+  --accent-soft: rgba(14, 124, 107, 0.1);
+
+  /* ── Neutrals — warm, to sit with the rose ── */
+  --bg: #FAF9F8;
   --surface: #FFFFFF;
   /* One step in from the surface: hover fills, input beds, skeletons. */
-  --surface-2: #F1F2F8;
-  --surface-3: #E9EBF3;
-  --text: #171923;
-  --muted: #6B7280;
+  --surface-2: #F4F2F1;
+  --surface-3: #EAE7E5;
+  --text: #1C1A1B;
+  --muted: #6B6567;
   /* Only for non-essential text (timestamps, hints) — lighter than muted. */
-  --muted-2: #8B93A1;
-  --border: #E8EAF0;
-  --border-strong: #D8DBE6;
+  --muted-2: #948D8F;
+  --border: #E6E2DF;
+  --border-strong: #D4CFCB;
 
   /* ── Semantic ── */
-  --success: #22C55E;
-  --success-soft: rgba(34, 197, 94, 0.12);
-  --danger: #EF4444;
-  --danger-hover: #DC2626;
-  --danger-soft: rgba(239, 68, 68, 0.1);
-  --danger-text: #DC2626;
-  --warning: #F59E0B;
-  --warning-soft: rgba(245, 158, 11, 0.12);
-  --info: #3B82F6;
+  --success: #16A34A;
+  --success-soft: rgba(22, 163, 74, 0.12);
+  --danger: #DC2626;
+  --danger-hover: #B91C1C;
+  --danger-soft: rgba(220, 38, 38, 0.1);
+  --danger-text: #C81E1E;
+  --warning: #B45309;
+  --warning-soft: rgba(180, 83, 9, 0.12);
+  --info: #1D4ED8;
 
-  /* ── Gradients ── */
-  --gradient-brand: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-  --gradient-brand-hover: linear-gradient(135deg, var(--primary-hover) 0%, #7C4DEF 100%);
-  --gradient-bubble: linear-gradient(135deg, #6A62FF 0%, #8B5CF6 100%);
-  --gradient-wash: linear-gradient(135deg, rgba(99, 91, 255, 0.1) 0%, rgba(139, 92, 246, 0.05) 100%);
-
-  /* ── Elevation — deliberately shallow ── */
-  --shadow-xs: 0 1px 2px rgba(23, 25, 35, 0.04);
-  --shadow-sm: 0 1px 3px rgba(23, 25, 35, 0.06), 0 1px 2px rgba(23, 25, 35, 0.04);
-  --shadow-md: 0 4px 12px rgba(23, 25, 35, 0.07);
-  --shadow-lg: 0 12px 32px rgba(23, 25, 35, 0.12);
-  --shadow-brand: 0 6px 18px rgba(99, 91, 255, 0.22);
+  /* ── Elevation — deliberately shallow.
+     Cards use borders; shadows are reserved for things that genuinely float
+     (popovers, modals, toasts). ── */
+  --shadow-xs: 0 1px 2px rgba(28, 26, 27, 0.04);
+  --shadow-sm: 0 1px 2px rgba(28, 26, 27, 0.05);
+  --shadow-md: 0 2px 8px rgba(28, 26, 27, 0.06);
+  --shadow-lg: 0 8px 24px rgba(28, 26, 27, 0.1);
 
   /* Backdrop behind modals and sticky bars. */
-  --scrim: rgba(23, 25, 35, 0.45);
-  --overlay-surface: rgba(255, 255, 255, 0.82);
-  --overlay-border: rgba(23, 25, 35, 0.08);
+  --scrim: rgba(28, 26, 27, 0.45);
 
-  /* ── Radii ── */
-  --radius-xs: 8px;
-  --radius-sm: 10px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 20px;
-  --radius-2xl: 24px;
+  /* ── Radii — medium, not pill-shaped.
+     `--radius-full` stays for the things that must be circular: avatars,
+     status dots, the composer's send button. ── */
+  --radius-xs: 6px;
+  --radius-sm: 8px;
+  --radius-md: 10px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 20px;
   --radius-full: 9999px;
 
   /* ── Motion ── */
   --ease: cubic-bezier(0.4, 0, 0.2, 1);
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-  --ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
   --transition-fast: 140ms var(--ease);
   --transition-base: 220ms var(--ease);
   --transition-slow: 380ms var(--ease-out);
@@ -84,130 +94,99 @@
 
 /* Dark palette. Applied when the OS asks for it (unless the user has
    explicitly chosen light) and whenever `data-theme="dark"` is set, so the
-   in-app toggle wins in both directions. */
+   in-app toggle wins in both directions.
+
+   `--primary` lightens here so brand text stays legible on a dark ground,
+   while `--primary-fill` holds its weight so white button labels keep
+   their contrast. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     color-scheme: dark;
 
-    --primary: #7B74FF;
-    --primary-hover: #8C86FF;
-    --primary-active: #6F68F5;
-    --secondary: #A78BFA;
+    --primary: #F0709A;
+    --primary-hover: #F591B2;
+    --primary-fill: #D6336C;
+    --primary-fill-hover: #E2457B;
+    --primary-fill-active: #C22A5F;
 
-    --primary-soft: rgba(123, 116, 255, 0.14);
-    --primary-soft-strong: rgba(123, 116, 255, 0.22);
-    --primary-ring: rgba(123, 116, 255, 0.3);
-    --primary-contrast: #0E1016;
+    --primary-soft: rgba(240, 112, 154, 0.12);
+    --primary-soft-strong: rgba(240, 112, 154, 0.2);
+    --primary-ring: rgba(240, 112, 154, 0.28);
 
-    --bg: #0E1016;
-    --surface: #161922;
-    --surface-2: #1E222E;
-    --surface-3: #272C3A;
-    --text: #F4F5F9;
-    --muted: #9BA3B2;
-    --muted-2: #7C8494;
-    --border: #262B37;
-    --border-strong: #333A49;
+    --brand-panel: #241A1E;
 
-    --success-soft: rgba(34, 197, 94, 0.16);
-    --danger-soft: rgba(239, 68, 68, 0.16);
+    --accent: #3FB8A4;
+    --accent-soft: rgba(63, 184, 164, 0.14);
+
+    --bg: #141112;
+    --surface: #1C1819;
+    --surface-2: #262122;
+    --surface-3: #322C2E;
+    --text: #F4F0EF;
+    --muted: #A9A1A2;
+    --muted-2: #7C7476;
+    --border: #322C2E;
+    --border-strong: #433B3D;
+
+    --success: #4ADE80;
+    --success-soft: rgba(74, 222, 128, 0.14);
+    --danger-soft: rgba(220, 38, 38, 0.18);
     --danger-text: #F87171;
-    --warning-soft: rgba(245, 158, 11, 0.16);
-
-    --gradient-wash: linear-gradient(135deg, rgba(123, 116, 255, 0.14) 0%, rgba(167, 139, 250, 0.07) 100%);
+    --warning: #FBBF24;
+    --warning-soft: rgba(251, 191, 36, 0.14);
+    --info: #60A5FA;
 
     --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);
-    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.36);
-    --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.44);
-    --shadow-lg: 0 14px 36px rgba(0, 0, 0, 0.56);
-    --shadow-brand: 0 6px 20px rgba(99, 91, 255, 0.34);
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.34);
+    --shadow-md: 0 2px 10px rgba(0, 0, 0, 0.42);
+    --shadow-lg: 0 10px 28px rgba(0, 0, 0, 0.54);
 
-    --scrim: rgba(6, 7, 11, 0.7);
-    --overlay-surface: rgba(22, 25, 34, 0.84);
-    --overlay-border: rgba(255, 255, 255, 0.08);
+    --scrim: rgba(8, 6, 7, 0.7);
   }
 }
 
 :root[data-theme="dark"] {
   color-scheme: dark;
 
-  --primary: #7B74FF;
-  --primary-hover: #8C86FF;
-  --primary-active: #6F68F5;
-  --secondary: #A78BFA;
+  --primary: #F0709A;
+  --primary-hover: #F591B2;
+  --primary-fill: #D6336C;
+  --primary-fill-hover: #E2457B;
+  --primary-fill-active: #C22A5F;
 
-  --primary-soft: rgba(123, 116, 255, 0.14);
-  --primary-soft-strong: rgba(123, 116, 255, 0.22);
-  --primary-ring: rgba(123, 116, 255, 0.3);
-  --primary-contrast: #0E1016;
+  --primary-soft: rgba(240, 112, 154, 0.12);
+  --primary-soft-strong: rgba(240, 112, 154, 0.2);
+  --primary-ring: rgba(240, 112, 154, 0.28);
 
-  --bg: #0E1016;
-  --surface: #161922;
-  --surface-2: #1E222E;
-  --surface-3: #272C3A;
-  --text: #F4F5F9;
-  --muted: #9BA3B2;
-  --muted-2: #7C8494;
-  --border: #262B37;
-  --border-strong: #333A49;
+  --brand-panel: #241A1E;
 
-  --success-soft: rgba(34, 197, 94, 0.16);
-  --danger-soft: rgba(239, 68, 68, 0.16);
+  --accent: #3FB8A4;
+  --accent-soft: rgba(63, 184, 164, 0.14);
+
+  --bg: #141112;
+  --surface: #1C1819;
+  --surface-2: #262122;
+  --surface-3: #322C2E;
+  --text: #F4F0EF;
+  --muted: #A9A1A2;
+  --muted-2: #7C7476;
+  --border: #322C2E;
+  --border-strong: #433B3D;
+
+  --success: #4ADE80;
+  --success-soft: rgba(74, 222, 128, 0.14);
+  --danger-soft: rgba(220, 38, 38, 0.18);
   --danger-text: #F87171;
-  --warning-soft: rgba(245, 158, 11, 0.16);
-
-  --gradient-wash: linear-gradient(135deg, rgba(123, 116, 255, 0.14) 0%, rgba(167, 139, 250, 0.07) 100%);
+  --warning: #FBBF24;
+  --warning-soft: rgba(251, 191, 36, 0.14);
+  --info: #60A5FA;
 
   --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.36);
-  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.44);
-  --shadow-lg: 0 14px 36px rgba(0, 0, 0, 0.56);
-  --shadow-brand: 0 6px 20px rgba(99, 91, 255, 0.34);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.34);
+  --shadow-md: 0 2px 10px rgba(0, 0, 0, 0.42);
+  --shadow-lg: 0 10px 28px rgba(0, 0, 0, 0.54);
 
-  --scrim: rgba(6, 7, 11, 0.7);
-  --overlay-surface: rgba(22, 25, 34, 0.84);
-  --overlay-border: rgba(255, 255, 255, 0.08);
-}
-
-/* ==================================================================
-   LEGACY TOKEN ALIASES
-   The previous dark-only palette used these names. They now resolve to
-   the tokens above so any styling not touched by this pass still tracks
-   the active theme instead of pinning itself to the old dark values.
-   ================================================================== */
-
-:root {
-  --bg-primary: var(--bg);
-  --bg-secondary: var(--surface);
-  --bg-tertiary: var(--surface-2);
-  --bg-elevated: var(--surface);
-  --bg-surface: var(--surface-2);
-
-  --text-primary: var(--text);
-  --text-secondary: var(--muted);
-  --text-muted: var(--muted-2);
-  --text-inverse: var(--primary-contrast);
-
-  --accent-start: var(--primary);
-  --accent-mid: var(--primary);
-  --accent-end: var(--secondary);
-  --gradient-accent: var(--gradient-brand);
-  --gradient-accent-hover: var(--gradient-brand-hover);
-  --gradient-subtle: var(--gradient-wash);
-
-  --color-success: var(--success);
-  --color-error: var(--danger);
-  --color-warning: var(--warning);
-  --color-info: var(--info);
-
-  --glass-bg: var(--surface);
-  --glass-bg-strong: var(--surface-2);
-  --glass-border: var(--border);
-  --glass-border-hover: var(--border-strong);
-  --glass-blur: 18px;
-
-  --shadow-glow: var(--shadow-brand);
-  --shadow-glow-strong: var(--shadow-brand);
+  --scrim: rgba(8, 6, 7, 0.7);
 }
 
 @theme inline {
@@ -222,7 +201,7 @@
   --color-muted: var(--muted);
   --color-muted-2: var(--muted-2);
   --color-brand: var(--primary);
-  --color-brand-2: var(--secondary);
+  --color-accent: var(--accent);
   --color-success: var(--success);
   --color-danger: var(--danger);
   --color-warning: var(--warning);
@@ -378,86 +357,52 @@ svg {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-xs);
   }
 
+  /* Hover shifts the border, not the position — cards stay put rather than
+     lifting off the page. */
   .card-interactive {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-xs);
-    transition: border-color var(--transition-base), box-shadow var(--transition-base),
-      transform var(--transition-base);
+    transition: border-color var(--transition-base), background-color var(--transition-base);
   }
 
   .card-interactive:hover {
     border-color: var(--border-strong);
-    box-shadow: var(--shadow-md);
-    transform: translateY(-2px);
-  }
-
-  /* Translucent bar for headers and floating control clusters. */
-  .panel-blur {
-    background: var(--overlay-surface);
-    backdrop-filter: blur(var(--glass-blur)) saturate(160%);
-    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
-    border: 1px solid var(--overlay-border);
-  }
-
-  /* Kept for anything still asking for the old glass classes. */
-  .glass,
-  .glass-strong {
-    background: var(--overlay-surface);
-    backdrop-filter: blur(var(--glass-blur)) saturate(160%);
-    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
-    border: 1px solid var(--overlay-border);
-  }
-
-  .glass-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-xs);
-    transition: border-color var(--transition-base), box-shadow var(--transition-base);
-  }
-
-  .glass-card:hover {
-    border-color: var(--border-strong);
-    box-shadow: var(--shadow-md);
   }
 
   /* ================================================================
      BUTTONS
+     Solid fills, medium radius, colour-only transitions. No transforms,
+     no shadows — a button should feel pressed, not launched.
      ================================================================ */
 
   .btn-primary {
-    background: var(--gradient-brand);
+    background: var(--primary-fill);
     color: #ffffff;
-    border: none;
+    border: 1px solid transparent;
     cursor: pointer;
     font-family: inherit;
     font-weight: 600;
     border-radius: var(--radius-md);
-    transition: filter var(--transition-fast), box-shadow var(--transition-base),
-      transform var(--transition-fast);
+    transition: background-color var(--transition-fast);
   }
 
   .btn-primary:hover:not(:disabled) {
-    filter: brightness(1.06);
-    box-shadow: var(--shadow-brand);
-    transform: translateY(-1px);
+    background: var(--primary-fill-hover);
   }
 
   .btn-primary:active:not(:disabled) {
-    transform: translateY(0);
-    filter: brightness(0.96);
+    background: var(--primary-fill-active);
   }
 
   .btn-primary:disabled {
-    opacity: 0.55;
+    opacity: 0.5;
     cursor: not-allowed;
   }
 
+  /* Neutral surface + subtle border. Also the Google button's base. */
   .btn-secondary {
     background: var(--surface);
     color: var(--text);
@@ -466,8 +411,7 @@ svg {
     font-family: inherit;
     font-weight: 500;
     border-radius: var(--radius-md);
-    transition: background-color var(--transition-fast), border-color var(--transition-fast),
-      color var(--transition-fast);
+    transition: background-color var(--transition-fast), border-color var(--transition-fast);
   }
 
   .btn-secondary:hover:not(:disabled) {
@@ -475,33 +419,17 @@ svg {
     border-color: var(--border-strong);
   }
 
+  .btn-secondary:active:not(:disabled) {
+    background: var(--surface-3);
+  }
+
   .btn-secondary:disabled {
-    opacity: 0.55;
+    opacity: 0.5;
     cursor: not-allowed;
   }
 
-  /* Legacy alias — the old gradient button. */
-  .gradient-btn {
-    background: var(--gradient-brand);
-    color: #ffffff;
-    border: none;
-    cursor: pointer;
-    font-weight: 600;
-    transition: filter var(--transition-fast), box-shadow var(--transition-base),
-      transform var(--transition-fast);
-  }
-
-  .gradient-btn:hover:not(:disabled) {
-    filter: brightness(1.06);
-    box-shadow: var(--shadow-brand);
-    transform: translateY(-1px);
-  }
-
-  .gradient-btn:active:not(:disabled) {
-    transform: translateY(0);
-  }
-
-  /* Square-ish tappable icon button, 40px on touch and up. */
+  /* Tappable icon button — circular by design, unlike the rectangular
+     text buttons above. */
   .icon-btn {
     display: inline-flex;
     align-items: center;
@@ -535,29 +463,20 @@ svg {
     background: var(--danger-soft);
     color: var(--danger-text);
   }
-
-  .gradient-text {
-    background: var(--gradient-brand);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    color: transparent;
-  }
 }
 
 /* ==================================================================
    FORM FIELDS
    Inside `@layer components` so Tailwind's own padding utilities still win —
-   the fields that carry a leading icon rely on `pl-11` beating the shorthand
-   `padding` below, which an unlayered rule would have overridden.
+   a field that carries a trailing button relies on `pr-11` beating the
+   shorthand `padding` below, which an unlayered rule would have overridden.
    ================================================================== */
 
 @layer components {
 
-  .field,
-  .input-dark {
+  .field {
     width: 100%;
-    padding: 12px 16px;
+    padding: 12px 14px;
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius-md);
@@ -573,27 +492,22 @@ svg {
   }
 
   @media (min-width: 768px) {
-
-    .field,
-    .input-dark {
+    .field {
       font-size: 0.9375rem;
     }
   }
 
-  .field::placeholder,
-  .input-dark::placeholder {
+  .field::placeholder {
     color: var(--muted-2);
   }
 
-  .field:focus,
-  .input-dark:focus {
+  .field:focus {
     border-color: var(--primary);
     box-shadow: 0 0 0 3px var(--primary-ring);
   }
 
   .field.field-error,
-  .field.input-error,
-  .input-dark.input-error {
+  .field.input-error {
     border-color: var(--danger);
     box-shadow: 0 0 0 3px var(--danger-soft);
   }
@@ -616,23 +530,12 @@ svg {
 
 @layer components {
 
+  /* A plain opacity pulse rather than a sweeping highlight — no gradient,
+     and it reads more calmly next to the flat surfaces around it. */
   .skeleton {
-    position: relative;
-    overflow: hidden;
     background: var(--surface-2);
     border-radius: var(--radius-xs);
-  }
-
-  .skeleton::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(90deg,
-        transparent 0%,
-        color-mix(in srgb, var(--surface) 70%, transparent) 50%,
-        transparent 100%);
-    transform: translateX(-100%);
-    animation: skeleton-sweep 1.5s var(--ease) infinite;
+    animation: skeleton-pulse 1.6s var(--ease) infinite;
   }
 
   .spinner {
@@ -659,9 +562,15 @@ svg {
   }
 }
 
-@keyframes skeleton-sweep {
+@keyframes skeleton-pulse {
+
+  0%,
   100% {
-    transform: translateX(100%);
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.55;
   }
 }
 
@@ -678,7 +587,7 @@ svg {
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(14px);
+    transform: translateY(10px);
   }
 
   to {
@@ -690,12 +599,12 @@ svg {
 @keyframes slideUp {
   from {
     opacity: 0;
-    transform: translateY(24px) scale(0.98);
+    transform: translateY(16px);
   }
 
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(0);
   }
 }
 
@@ -723,42 +632,20 @@ svg {
   }
 }
 
-@keyframes shimmer {
-  0% {
-    background-position: -200% 0;
-  }
-
-  100% {
-    background-position: 200% 0;
-  }
-}
-
-@keyframes float {
-
-  0%,
-  100% {
-    transform: translateY(0px);
-  }
-
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
 /* Expanding halo behind a ringing call avatar. */
 @keyframes call-ring {
   0% {
     transform: scale(0.9);
-    opacity: 0.55;
+    opacity: 0.5;
   }
 
   70% {
-    transform: scale(1.5);
+    transform: scale(1.45);
     opacity: 0;
   }
 
   100% {
-    transform: scale(1.5);
+    transform: scale(1.45);
     opacity: 0;
   }
 }
@@ -770,8 +657,8 @@ svg {
   }
 
   50% {
-    transform: scale(1.06);
-    opacity: 0.65;
+    transform: scale(1.05);
+    opacity: 0.7;
   }
 
   100% {
@@ -780,15 +667,16 @@ svg {
   }
 }
 
-@keyframes pulse-glow {
+/* Ring that breathes outward from an incoming-call accept button. */
+@keyframes pulse-ring-success {
 
   0%,
   100% {
-    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5);
+    box-shadow: 0 0 0 0 var(--success-soft);
   }
 
   50% {
-    box-shadow: 0 0 0 8px rgba(34, 197, 94, 0);
+    box-shadow: 0 0 0 8px rgba(22, 163, 74, 0);
   }
 }
 
@@ -807,56 +695,38 @@ svg {
   }
 }
 
-@keyframes gradient-shift {
-  0% {
-    background-position: 0% 50%;
-  }
-
-  50% {
-    background-position: 100% 50%;
-  }
-
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
 @keyframes message-in {
   from {
     opacity: 0;
-    transform: translateY(6px) scale(0.98);
+    transform: translateY(6px);
   }
 
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(0);
   }
 }
 
 /* ── Animation utilities ── */
 
 .animate-fade-in {
-  animation: fadeIn 0.35s var(--ease-out) forwards;
+  animation: fadeIn 0.3s var(--ease-out) forwards;
 }
 
 .animate-fade-in-up {
-  animation: fadeInUp 0.45s var(--ease-out) forwards;
+  animation: fadeInUp 0.4s var(--ease-out) forwards;
 }
 
 .animate-slide-up {
-  animation: slideUp 0.4s var(--ease-out) forwards;
+  animation: slideUp 0.35s var(--ease-out) forwards;
 }
 
 .animate-slide-left {
-  animation: slideInLeft 0.35s var(--ease-out) forwards;
+  animation: slideInLeft 0.3s var(--ease-out) forwards;
 }
 
 .animate-slide-right {
-  animation: slideInRight 0.35s var(--ease-out) forwards;
-}
-
-.animate-float {
-  animation: float 3s ease-in-out infinite;
+  animation: slideInRight 0.3s var(--ease-out) forwards;
 }
 
 .animate-call-ring {
@@ -868,22 +738,11 @@ svg {
 }
 
 .animate-pulse-glow {
-  animation: pulse-glow 2s ease-in-out infinite;
-}
-
-.animate-shimmer {
-  background: linear-gradient(90deg, transparent 25%, var(--surface-3) 50%, transparent 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.6s infinite;
-}
-
-.animate-gradient {
-  background-size: 200% 200%;
-  animation: gradient-shift 5s ease infinite;
+  animation: pulse-ring-success 2s ease-in-out infinite;
 }
 
 .animate-message-in {
-  animation: message-in 0.25s var(--ease-out) forwards;
+  animation: message-in 0.22s var(--ease-out) forwards;
 }
 
 .animate-typing-dot {
@@ -919,13 +778,10 @@ svg {
    CALL SURFACES
    ================================================================== */
 
-/* Ambient backdrop for the audio call screen — a calm brand-tinted wash
-   rather than flat black, so an audio call still feels like the app. */
+/* Backdrop for the audio call screen — a flat neutral step away from the
+   app background, so an audio call still feels like part of the product. */
 .call-stage {
-  background:
-    radial-gradient(120% 80% at 50% -10%, var(--primary-soft-strong) 0%, transparent 60%),
-    radial-gradient(90% 70% at 50% 110%, rgba(139, 92, 246, 0.14) 0%, transparent 60%),
-    var(--bg);
+  background: var(--surface-2);
 }
 
 .video_player {

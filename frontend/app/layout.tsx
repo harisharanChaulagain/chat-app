@@ -31,8 +31,8 @@ export const viewport: Viewport = {
   viewportFit: "cover",
   // Matches the light/dark app background so the browser chrome blends in.
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#F7F8FC" },
-    { media: "(prefers-color-scheme: dark)", color: "#0E1016" },
+    { media: "(prefers-color-scheme: light)", color: "#FAF9F8" },
+    { media: "(prefers-color-scheme: dark)", color: "#141112" },
   ],
 };
 

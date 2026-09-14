@@ -13,13 +13,7 @@ export default function Loading() {
       aria-live="polite"
     >
       <div className="flex flex-col items-center gap-5">
-        <div
-          className="flex h-14 w-14 items-center justify-center rounded-[var(--radius-xl)] animate-pulse-ring"
-          style={{
-            background: 'var(--gradient-brand)',
-            boxShadow: 'var(--shadow-brand)',
-          }}
-        >
+        <div className="flex h-14 w-14 items-center justify-center rounded-[var(--radius-xl)] bg-[var(--primary-fill)] animate-pulse-ring">
           <MessageCircle className="h-7 w-7 text-white" />
         </div>
         <p className="text-sm text-[var(--muted)]">Loading…</p>

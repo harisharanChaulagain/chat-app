@@ -39,16 +39,16 @@ const FILTERS: { key: FilterKey; label: string }[] = [
 ];
 
 /**
- * Avatar fills stay inside the brand family — indigo through fuchsia with two
- * warm outliers — so a grid of faces reads as one palette, not confetti.
+ * Avatar fills — six solid, deep-enough-for-white-text tones drawn around the
+ * brand rose, so a grid of faces reads as one palette rather than confetti.
  */
-const AVATAR_GRADIENTS = [
-  "linear-gradient(135deg, #635BFF 0%, #8B5CF6 100%)",
-  "linear-gradient(135deg, #7C6BFF 0%, #C084FC 100%)",
-  "linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%)",
-  "linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%)",
-  "linear-gradient(135deg, #5B8DEF 0%, #635BFF 100%)",
-  "linear-gradient(135deg, #635BFF 0%, #22C55E 100%)",
+const AVATAR_COLORS = [
+  "#D6336C",
+  "#B5417F",
+  "#0E7C6B",
+  "#C2410C",
+  "#3F5FBF",
+  "#8A5A2B",
 ];
 
 const STATUS_BADGES: Record<FollowStatus, { label: string; className: string } | null> = {
@@ -65,18 +65,18 @@ const STATUS_BADGES: Record<FollowStatus, { label: string; className: string } |
   requested: {
     label: "Pending",
     className:
-      "text-[var(--warning)] bg-[rgba(245,158,11,0.12)] border-[rgba(245,158,11,0.22)]",
+      "text-[var(--warning)] bg-[var(--warning-soft)] border-[var(--warning)]/20",
   },
   follow: null,
 };
 
-/** Stable per-user avatar gradient so a face is recognisable across renders. */
-const gradientFor = (id: string) => {
+/** Stable per-user avatar colour so a face is recognisable across renders. */
+const colorFor = (id: string) => {
   let hash = 0;
   for (let i = 0; i < id.length; i++) {
     hash = (hash * 31 + id.charCodeAt(i)) % 100003;
   }
-  return AVATAR_GRADIENTS[hash % AVATAR_GRADIENTS.length];
+  return AVATAR_COLORS[hash % AVATAR_COLORS.length];
 };
 
 const initialsOf = (name: string) =>
@@ -202,13 +202,7 @@ const FriendsPage = () => {
             <div className="flex flex-wrap items-start justify-between gap-3 sm:gap-4">
               <div className="animate-fade-in">
                 <h1 className="flex items-center gap-2.5 text-xl font-bold tracking-tight sm:gap-3 sm:text-2xl md:text-[28px]">
-                  <span
-                    className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-[var(--radius-md)] sm:h-10 sm:w-10"
-                    style={{
-                      background: "var(--gradient-brand)",
-                      boxShadow: "var(--shadow-brand)",
-                    }}
-                  >
+                  <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-[var(--radius-md)] bg-[var(--primary-fill)] sm:h-10 sm:w-10">
                     <Users className="h-[18px] w-[18px] text-white sm:h-5 sm:w-5" />
                   </span>
                   Discover people
@@ -261,9 +255,9 @@ const FriendsPage = () => {
                   <button
                     key={item.key}
                     onClick={() => setFilter(item.key)}
-                    className={`flex flex-shrink-0 items-center gap-2 rounded-full border px-3.5 py-2 text-xs font-medium transition-all duration-200 sm:px-4 sm:text-sm ${
+                    className={`flex flex-shrink-0 items-center gap-2 rounded-full border px-3.5 py-2 text-xs font-medium transition-colors duration-150 sm:px-4 sm:text-sm ${
                       isActive
-                        ? "border-transparent bg-[var(--primary)] text-white shadow-[var(--shadow-brand)]"
+                        ? "border-transparent bg-[var(--primary-fill)] text-white"
                         : "border-[var(--border)] bg-[var(--surface)] text-[var(--muted)] hover:border-[var(--border-strong)] hover:bg-[var(--surface-2)] hover:text-[var(--text)]"
                     }`}
                   >
@@ -402,15 +396,12 @@ const PersonCard = ({
         animationFillMode: "forwards",
       }}
     >
-      {/* Hover wash */}
-      <div className="pointer-events-none absolute inset-0 bg-[var(--gradient-wash)] opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-
       <div className="relative z-10">
         <div className="flex items-start gap-3 sm:gap-4">
           <div className="relative flex-shrink-0">
             <div
-              className="flex h-12 w-12 items-center justify-center rounded-[var(--radius-lg)] text-base font-bold text-white transition-transform duration-300 group-hover:scale-105 sm:h-[52px] sm:w-[52px]"
-              style={{ background: gradientFor(user._id) }}
+              className="flex h-12 w-12 items-center justify-center rounded-[var(--radius-lg)] text-base font-bold text-white sm:h-[52px] sm:w-[52px]"
+              style={{ background: colorFor(user._id) }}
             >
               {initialsOf(user.name)}
             </div>

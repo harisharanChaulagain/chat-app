@@ -53,15 +53,10 @@ export default function ChatWindow() {
         return (
             <div className={`${paneClasses} items-center justify-center p-6`}>
                 <div className="flex max-w-sm flex-col items-center text-center animate-fade-in">
-                    <div className="relative mb-6 flex h-20 w-20 items-center justify-center overflow-hidden rounded-[var(--radius-2xl)] border border-[var(--border)] bg-[var(--surface)] shadow-[var(--shadow-sm)] sm:h-24 sm:w-24">
-                        {/* Soft brand wash behind the glyph keeps the empty state
-                            warm rather than grey. */}
-                        <span
-                            aria-hidden="true"
-                            className="absolute inset-0"
-                            style={{ background: 'var(--gradient-wash)' }}
-                        />
-                        <MessagesSquare className="relative h-9 w-9 text-[var(--primary)] sm:h-10 sm:w-10" />
+                    {/* Solid brand tint behind the glyph keeps the empty state
+                        warm rather than grey. */}
+                    <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-[var(--radius-2xl)] bg-[var(--primary-soft-strong)] sm:h-24 sm:w-24">
+                        <MessagesSquare className="h-9 w-9 text-[var(--primary)] sm:h-10 sm:w-10" />
                     </div>
 
                     <h1 className="text-xl font-bold tracking-tight text-[var(--text)] sm:text-2xl">
