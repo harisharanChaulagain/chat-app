@@ -8,6 +8,7 @@ import messageRoute from "./routes/message.route";
 import followRoutes from "./routes/follow.route";
 import groupRoutes from "./routes/group.route";
 import friendRoutes from "./routes/friend.route";
+import datingRoutes from "./routes/dating.route";
 import { app, server } from "./socketio/server";
 
 dotenv.config();
@@ -37,6 +38,7 @@ app.use("/api/message", messageRoute);
 app.use("/api/follow", followRoutes);
 app.use("/api/group", groupRoutes);
 app.use("/api/friend", friendRoutes);
+app.use("/api/dating", datingRoutes);
 
 app.get(
   "/api/health",

@@ -9,6 +9,7 @@ import {
   appendMessage,
   findOrCreateDirectConversation,
 } from "../services/conversation.service";
+import { findActiveMatch, isBlockedBetween } from "../services/dating.service";
 
 type MessageType = "text" | "image" | "video" | "audio" | "file";
 
@@ -25,7 +26,19 @@ interface GetMessageQuery {
   isGroup?: string;
 }
 
+/**
+ * Chat is unlocked by a mutual like — an active match.
+ *
+ * Accounts that paired up under the old follow-based flow are still honoured,
+ * so nobody loses a conversation they already had; a block closes the door
+ * either way regardless of how the pair was formed.
+ */
 const canChatDirectly = async (userId1: Types.ObjectId, userId2: Types.ObjectId | string): Promise<boolean> => {
+  if (await isBlockedBetween(userId1, userId2)) return false;
+
+  const match = await findActiveMatch(userId1, userId2);
+  if (match) return true;
+
   const follow1 = await Follow.findOne({followerId: userId1, followingId: userId2, status: "accepted"});
   const follow2 = await Follow.findOne({followerId: userId2, followingId: userId1, status: "accepted"});
   return Boolean(follow1 && follow2);
@@ -54,7 +67,7 @@ export const sendMessage = async (req: Request<{ id: string; isGroup?: string },
     if (!isGroupMessage) {
       const canChat = await canChatDirectly(senderId, receiverId);
       if (!canChat) {
-        res.status(403).json({ message: "You can only chat with mutual followers" });
+        res.status(403).json({ message: "You can only chat with your matches" });
         return;
       }
     }

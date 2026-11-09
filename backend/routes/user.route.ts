@@ -5,6 +5,7 @@ import {
   logout,
   getUserProfile,
   getAuthenticatedUserProfile,
+  updateMyProfile,
 } from "../controllers/user.controller";
 import secureRoute from "../middleware/secureRoute";
 
@@ -14,6 +15,7 @@ router.post("/register", registerUser);
 router.post("/login", loginUser);
 router.post("/logout", logout);
 router.get("/profile", secureRoute, getAuthenticatedUserProfile);
+router.patch("/profile", secureRoute, updateMyProfile);
 router.get("/getUserProfile", secureRoute, getUserProfile);
 
 export default router;

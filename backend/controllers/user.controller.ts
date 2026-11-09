@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import User from "../models/user.model";
 import { loginSchema, userRegister } from "../validation/user.validation";
+import { datingProfileSchema } from "../validation/dating.validation";
+import { selfProfile } from "../services/dating.service";
 import createTokenAndSaveCookie from "../jwt/generateToken";
 import followModel from "../models/follow.model";
 
@@ -83,13 +85,99 @@ export const getAuthenticatedUserProfile = async (
     
     const userId = user._id;
     const userData = await User.findById(userId).select("-password");
-    
+
     if (!userData) {
       res.status(404).json({ message: "User not found" });
       return;
     }
-    
-    res.status(200).json({ user: userData });
+
+    res.status(200).json({ user: selfProfile(userData) });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+/**
+ * Edits the signed-in member's dating profile. Every field is optional, so the
+ * profile page can save one section at a time without clobbering the rest.
+ */
+export const updateMyProfile = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const user = (req as any).user;
+    if (!user) {
+      res.status(401).json({ message: "Unauthorized" });
+      return;
+    }
+
+    const parsed = datingProfileSchema.safeParse(req.body);
+    if (!parsed.success) {
+      res.status(400).json({
+        message: parsed.error.issues[0]?.message ?? "Invalid profile",
+        errors: parsed.error.flatten().fieldErrors,
+      });
+      return;
+    }
+
+    const input = parsed.data;
+
+    // Whichever half of the age range was left out keeps its stored value, so a
+    // one-sided edit cannot quietly invert the window.
+    const ageMin = input.ageMin ?? user.ageMin;
+    const ageMax = input.ageMax ?? user.ageMax;
+    if (ageMin > ageMax) {
+      res
+        .status(400)
+        .json({ message: "Maximum age must be at least the minimum" });
+      return;
+    }
+
+    const updates: Record<string, unknown> = {};
+
+    if (input.name !== undefined) updates.name = input.name;
+    if (input.bio !== undefined) updates.bio = input.bio;
+    if (input.city !== undefined) updates.city = input.city;
+    if (input.country !== undefined) updates.country = input.country;
+    if (input.gender !== undefined) updates.gender = input.gender;
+    if (input.intent !== undefined) updates.intent = input.intent;
+    if (input.preference !== undefined) updates.preference = input.preference;
+    if (input.ageMin !== undefined) updates.ageMin = input.ageMin;
+    if (input.ageMax !== undefined) updates.ageMax = input.ageMax;
+    if (input.photos !== undefined) updates.photos = input.photos;
+
+    if (input.birthDate !== undefined) {
+      updates.birthDate = input.birthDate ? new Date(input.birthDate) : null;
+    }
+
+    if (input.interests !== undefined) {
+      // Same interest twice, differently cased, is still the same interest.
+      const seen = new Set<string>();
+      updates.interests = input.interests.filter((interest) => {
+        const key = interest.toLowerCase();
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+    }
+
+    const updated = await User.findByIdAndUpdate(
+      user._id,
+      { $set: updates },
+      { new: true, runValidators: true }
+    ).select("-password");
+
+    if (!updated) {
+      res.status(404).json({ message: "User not found" });
+      return;
+    }
+
+    res.status(200).json({
+      message: "Profile updated",
+      user: selfProfile(updated),
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
